@@ -17,7 +17,8 @@ import aiofiles
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 
 load_dotenv()
 
@@ -92,6 +93,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Serve the frontend UI from /static
+_STATIC_DIR = Path(__file__).parent / "static"
+if _STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
+
 
 # ---------------------------------------------------------------------------
 # Endpoints
@@ -103,14 +109,13 @@ async def health_check():
     return {"status": "ok", "service": "Vigilant", "version": "1.0.0"}
 
 
-@app.get("/", tags=["System"])
+@app.get("/", tags=["System"], response_class=HTMLResponse, include_in_schema=False)
 async def root():
-    return {
-        "service": "Vigilant – RBI Compliance Intelligence API",
-        "docs": "/docs",
-        "health": "/health",
-        "analyze": "POST /analyze",
-    }
+    """Serves the Vigilant frontend UI."""
+    html_path = Path(__file__).parent / "static" / "index.html"
+    if html_path.exists():
+        return HTMLResponse(content=html_path.read_text(encoding="utf-8"))
+    return HTMLResponse(content="<h2>Vigilant API is running. Go to <a href='/docs'>/docs</a> for Swagger UI.</h2>")
 
 
 @app.get("/config", tags=["Configuration"])

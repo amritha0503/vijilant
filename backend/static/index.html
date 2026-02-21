@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vigilant – RBI Compliance Intelligence</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #21262d;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --orange: #db6d28;
+    --red: #f85149;
+    --purple: #a371f7;
+    --critical: #ff6b6b;
+    --high: #ffa94d;
+    --medium: #ffd43b;
+    --low: #69db7c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #58a6ff, #a371f7);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 800; color: #fff;
+  }
+  header h1 { font-size: 18px; font-weight: 700; }
+  header span { color: var(--muted); font-size: 13px; margin-left: auto; }
+
+  /* ── Layout ── */
+  .layout {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 0;
+    align-items: start;
+  }
+  .left-panel {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: sticky;
+    top: 65px;
+    height: calc(100vh - 65px);
+    overflow-y: auto;
+  }
+  .right-panel {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-height: calc(100vh - 65px);
+  }
+
+  /* ── Upload Area ── */
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 32px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface2);
+    position: relative;
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--accent);
+    background: rgba(88, 166, 255, 0.06);
+  }
+  .upload-zone input[type=file] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .upload-icon { font-size: 36px; margin-bottom: 10px; }
+  .upload-zone p { color: var(--muted); font-size: 13px; line-height: 1.5; }
+  .upload-zone .filename {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 8px;
+    word-break: break-all;
+  }
+
+  /* ── Config Collapsed ── */
+  .collapsible {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .collapsible-header {
+    padding: 12px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 500;
+    user-select: none;
+  }
+  .collapsible-header:hover { background: rgba(255,255,255,0.04); }
+  .collapsible-header .chevron { transition: transform 0.2s; font-size: 11px; color: var(--muted); }
+  .collapsible-header.open .chevron { transform: rotate(180deg); }
+  .collapsible-body { display: none; padding: 0 16px 16px; }
+  .collapsible-body.open { display: block; }
+  textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: "SF Mono", "Fira Code", monospace;
+    font-size: 11px;
+    padding: 12px;
+    resize: vertical;
+    min-height: 120px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  textarea:focus { border-color: var(--accent); }
+  .config-hint { color: var(--muted); font-size: 11px; margin-bottom: 8px; }
+
+  /* ── Analyze Button ── */
+  .btn-analyze {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #1f6feb, #388bfd);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-analyze:hover:not(:disabled) { opacity: 0.9; }
+  .btn-analyze:active:not(:disabled) { transform: scale(0.99); }
+  .btn-analyze:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ── Spinner ── */
+  .spinner {
+    width: 18px; height: 18px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Empty / Error State ── */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 12px;
+    color: var(--muted);
+    text-align: center;
+  }
+  .empty-state .icon { font-size: 48px; opacity: 0.4; }
+  .empty-state p { font-size: 14px; max-width: 280px; line-height: 1.5; }
+  .error-box {
+    background: rgba(248, 81, 73, 0.12);
+    border: 1px solid rgba(248, 81, 73, 0.4);
+    border-radius: 10px;
+    padding: 16px 20px;
+    color: #ffa198;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface2);
+  }
+  .card-body { padding: 20px; }
+
+  /* ── Summary ── */
+  .summary-text { font-size: 14px; line-height: 1.7; color: #c9d1d9; }
+  .meta-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .pill {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid;
+  }
+  .pill-blue  { background: rgba(88,166,255,0.12); border-color: rgba(88,166,255,0.3); color: #58a6ff; }
+  .pill-green { background: rgba(63,185,80,0.12);  border-color: rgba(63,185,80,0.3);  color: #3fb950; }
+  .pill-red   { background: rgba(248,81,73,0.12);  border-color: rgba(248,81,73,0.3);  color: #f85149; }
+  .pill-purple{ background: rgba(163,113,247,0.12);border-color: rgba(163,113,247,0.3);color: #a371f7; }
+  .pill-yellow{ background: rgba(210,153,34,0.12); border-color: rgba(210,153,34,0.3); color: #d29922; }
+  .pill-orange{ background: rgba(219,109,40,0.12); border-color: rgba(219,109,40,0.3); color: #db6d28; }
+
+  /* ── Risk Grid ── */
+  .risk-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  .risk-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .risk-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .risk-value { font-size: 20px; font-weight: 700; }
+  .risk-green  { color: var(--green); }
+  .risk-yellow { color: var(--yellow); }
+  .risk-orange { color: var(--orange); }
+  .risk-red    { color: var(--red); }
+  .score-bar-wrap { margin-top: 4px; background: var(--border); border-radius: 4px; height: 6px; overflow: hidden; }
+  .score-bar { height: 100%; border-radius: 4px; transition: width 1s ease; }
+
+  /* ── Violations Table ── */
+  .violations-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .violations-table th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .violations-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(48,54,61,0.5);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .violations-table tr:last-child td { border-bottom: none; }
+  .violations-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .clause-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: monospace;
+    background: rgba(88,166,255,0.15);
+    color: #58a6ff;
+    border: 1px solid rgba(88,166,255,0.25);
+    white-space: nowrap;
+  }
+  .sev-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .sev-critical { background: rgba(255,107,107,0.2); color: #ff6b6b; border: 1px solid rgba(255,107,107,0.4); }
+  .sev-high     { background: rgba(255,169,77,0.2);  color: #ffa94d; border: 1px solid rgba(255,169,77,0.4); }
+  .sev-medium   { background: rgba(255,212,59,0.2);  color: #ffd43b; border: 1px solid rgba(255,212,59,0.4); }
+  .sev-low      { background: rgba(105,219,124,0.2); color: #69db7c; border: 1px solid rgba(105,219,124,0.4); }
+  .evidence-quote {
+    font-style: italic;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+    padding-left: 8px;
+    border-left: 2px solid var(--border);
+  }
+  .no-violations {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--green);
+    font-size: 14px;
+    padding: 12px 0;
+  }
+
+  /* ── Compliance Flags ── */
+  .flags-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  /* ── Emotion Timeline ── */
+  .emotion-timeline {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    min-height: 40px;
+  }
+  .et-segment {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 4px;
+    font-size: 11px;
+    font-weight: 600;
+    transition: opacity 0.2s;
+  }
+  .et-label { font-size: 10px; margin-top: 2px; opacity: 0.8; }
+  .tone-neutral    { background: rgba(139,148,158,0.3); color: #8b949e; }
+  .tone-frustrated { background: rgba(210,153,34,0.35); color: #d29922; }
+  .tone-angry      { background: rgba(248,81,73,0.35);  color: #f85149; }
+  .tone-threatening{ background: rgba(163,113,247,0.4); color: #a371f7; }
+  .tone-distressed { background: rgba(219,109,40,0.35); color: #db6d28; }
+  .tone-aggressive { background: rgba(255,107,107,0.4); color: #ff6b6b; }
+
+  /* ── Agent Scores ── */
+  .agent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .agent-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .agent-item-label { font-size: 11px; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .agent-item-value { font-size: 22px; font-weight: 700; }
+  .quality-score-wrap {
+    grid-column: span 2;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .quality-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .quality-score-num { font-size: 28px; font-weight: 800; }
+  .quality-desc { font-size: 12px; color: var(--muted); }
+
+  /* ── Transcript ── */
+  .transcript-list { display: flex; flex-direction: column; gap: 10px; }
+  .turn {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .turn-meta { min-width: 70px; text-align: right; }
+  .turn-speaker {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  .turn-speaker.agent    { background: rgba(88,166,255,0.2); color: #58a6ff; }
+  .turn-speaker.customer { background: rgba(63,185,80,0.2);  color: #3fb950; }
+  .turn-speaker.unknown  { background: var(--surface2); color: var(--muted); }
+  .turn-ts { font-size: 10px; color: var(--muted); margin-top: 3px; display: block; }
+  .turn-body { flex: 1; }
+  .turn-msg { font-size: 13px; line-height: 1.6; color: #c9d1d9; }
+  .tone-tag {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .tone-positive        { background: rgba(63,185,80,0.2);   color: #3fb950; }
+  .tone-neutral         { background: rgba(139,148,158,0.2); color: #8b949e; }
+  .tone-angry-frustrated{ background: rgba(248,81,73,0.2);   color: #f85149; }
+  .tone-fearful-anxious { background: rgba(219,109,40,0.2);  color: #db6d28; }
+  .tone-urgent          { background: rgba(163,113,247,0.2); color: #a371f7; }
+
+  /* ── Time violation banner ── */
+  .time-violation-banner {
+    background: rgba(248,81,73,0.12);
+    border: 1px solid rgba(248,81,73,0.35);
+    border-radius: 10px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: #ffa198;
+  }
+  .time-violation-banner .icon { font-size: 22px; flex-shrink: 0; }
+
+  /* ── Request info ── */
+  .info-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--muted);
+    padding: 12px 0;
+    border-top: 1px solid var(--border);
+  }
+  .info-row span b { color: var(--text); }
+
+  /* ── Policy status banner ── */
+  .policy-banner {
+    border-radius: 10px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .policy-ok   { background: rgba(63,185,80,0.12);  border: 1px solid rgba(63,185,80,0.3);  color: #3fb950; }
+  .policy-fail { background: rgba(248,81,73,0.12);  border: 1px solid rgba(248,81,73,0.3);  color: #f85149; }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #484f58; }
+
+  /* ── Progress steps ── */
+  .progress-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .step { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--muted); }
+  .step.active { color: var(--accent); }
+  .step.done   { color: var(--green); }
+  .step-dot {
+    width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    background: var(--border); color: var(--muted);
+  }
+  .step.active .step-dot { background: rgba(88,166,255,0.2); color: var(--accent); border: 1px solid var(--accent); animation: pulse 1.5s ease infinite; }
+  .step.done .step-dot   { background: rgba(63,185,80,0.2);  color: var(--green);  border: 1px solid var(--green); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">V</div>
+  <h1>Vigilant</h1>
+  <span>RBI Compliance Intelligence Platform</span>
+</header>
+
+<div class="layout">
+
+  <!-- ════ LEFT PANEL ════ -->
+  <div class="left-panel">
+    <div>
+      <div class="section-label">1. Upload Call Recording</div>
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" id="audioInput" accept=".mp3,.wav,.ogg,.m4a,.flac,.webm,.mp4" />
+        <div class="upload-icon">🎙️</div>
+        <p>Drag &amp; drop your audio file here<br>or click to browse</p>
+        <p style="margin-top:6px;font-size:11px;color:#484f58">MP3 · WAV · OGG · M4A · FLAC</p>
+        <div class="filename" id="fileName"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">2. Client Configuration (optional)</div>
+      <div class="collapsible">
+        <div class="collapsible-header" id="configToggle" onclick="toggleConfig()">
+          <span>⚙️ Override Default Config</span>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="collapsible-body" id="configBody">
+          <p class="config-hint" style="margin-top:10px">Paste a JSON object to override the default RBI config. Omitted fields use defaults.</p>
+          <textarea id="configInput" placeholder='{
+  "business_domain": "Banking / Debt Recovery",
+  "monitored_products": ["Credit Card", "Personal Loan"],
+  "risk_triggers": ["Harassment", "Jail Mention"],
+  "custom_rules": []
+}'></textarea>
+          <div id="configError" style="color:#f85149;font-size:11px;margin-top:6px;display:none"></div>
+          <button onclick="loadDefaultConfig()" style="margin-top:8px;padding:6px 12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:12px;cursor:pointer">Load Default Template</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-analyze" id="analyzeBtn" onclick="analyze()" disabled>
+      <span id="btnIcon">🔍</span>
+      <span id="btnText">Analyze Call</span>
+    </button>
+
+    <!-- Progress (shown during analysis) -->
+    <div class="progress-steps" id="progressSteps" style="display:none">
+      <div class="step" id="step1"><div class="step-dot">1</div> Processing Audio</div>
+      <div class="step" id="step2"><div class="step-dot">2</div> Transcribing &amp; Diarizing</div>
+      <div class="step" id="step3"><div class="step-dot">3</div> Retrieving Policy Clauses</div>
+      <div class="step" id="step4"><div class="step-dot">4</div> Compliance Analysis</div>
+      <div class="step" id="step5"><div class="step-dot">5</div> Building Report</div>
+    </div>
+
+    <!-- Mini info -->
+    <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-top:auto;padding-top:16px;border-top:1px solid var(--border)">
+      <b style="color:var(--text)">API Endpoints</b><br>
+      <code style="color:var(--accent)">GET /config</code> — default config<br>
+      <code style="color:var(--accent)">GET /config/schema</code> — field docs<br>
+      <code style="color:var(--accent)">POST /config/validate</code> — validate config<br>
+      <code style="color:var(--accent)">GET /docs</code> — Swagger UI
+    </div>
+  </div>
+
+  <!-- ════ RIGHT PANEL ════ -->
+  <div class="right-panel" id="rightPanel">
+    <div class="empty-state" id="emptyState">
+      <div class="icon">📋</div>
+      <p>Upload a call recording and click <b>Analyze Call</b> to generate a compliance audit report.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API = "http://localhost:8000";
+let analysisTimeout = null;
+
+// ── File selection ──
+const audioInput = document.getElementById("audioInput");
+const uploadZone = document.getElementById("uploadZone");
+const analyzeBtn = document.getElementById("analyzeBtn");
+
+audioInput.addEventListener("change", () => {
+  if (audioInput.files[0]) {
+    document.getElementById("fileName").textContent = "✓ " + audioInput.files[0].name;
+    analyzeBtn.disabled = false;
+  }
+});
+
+uploadZone.addEventListener("dragover", e => { e.preventDefault(); uploadZone.classList.add("drag-over"); });
+uploadZone.addEventListener("dragleave", () => uploadZone.classList.remove("drag-over"));
+uploadZone.addEventListener("drop", e => {
+  e.preventDefault();
+  uploadZone.classList.remove("drag-over");
+  const f = e.dataTransfer.files[0];
+  if (f) {
+    audioInput.files = e.dataTransfer.files;
+    document.getElementById("fileName").textContent = "✓ " + f.name;
+    analyzeBtn.disabled = false;
+  }
+});
+
+// ── Config toggle ──
+function toggleConfig() {
+  const header = document.getElementById("configToggle");
+  const body = document.getElementById("configBody");
+  header.classList.toggle("open");
+  body.classList.toggle("open");
+}
+
+async function loadDefaultConfig() {
+  try {
+    const r = await fetch(`${API}/config`);
+    const d = await r.json();
+    document.getElementById("configInput").value = JSON.stringify(d, null, 2);
+    document.getElementById("configError").style.display = "none";
+  } catch(e) {
+    document.getElementById("configError").textContent = "Could not load default config: " + e.message;
+    document.getElementById("configError").style.display = "block";
+  }
+}
+
+// ── Progress animation ──
+const STEPS = ["step1","step2","step3","step4","step5"];
+let stepIdx = 0;
+function startProgress() {
+  const ps = document.getElementById("progressSteps");
+  ps.style.display = "flex";
+  stepIdx = 0;
+  STEPS.forEach(s => {
+    const el = document.getElementById(s);
+    el.className = "step";
+    el.querySelector(".step-dot").textContent = s.replace("step","");
+  });
+  advanceStep();
+}
+function advanceStep() {
+  if (stepIdx > 0 && stepIdx <= STEPS.length) {
+    const prev = document.getElementById(STEPS[stepIdx-1]);
+    prev.className = "step done";
+    prev.querySelector(".step-dot").textContent = "✓";
+  }
+  if (stepIdx < STEPS.length) {
+    document.getElementById(STEPS[stepIdx]).className = "step active";
+    stepIdx++;
+    const delay = [4000, 20000, 6000, 30000, 3000][stepIdx-1] || 8000;
+    analysisTimeout = setTimeout(advanceStep, delay);
+  }
+}
+function stopProgress() {
+  clearTimeout(analysisTimeout);
+  STEPS.forEach(s => {
+    const el = document.getElementById(s);
+    el.className = "step done";
+    el.querySelector(".step-dot").textContent = "✓";
+  });
+  setTimeout(() => { document.getElementById("progressSteps").style.display = "none"; }, 1500);
+}
+
+// ── Main analyze ──
+async function analyze() {
+  const file = audioInput.files[0];
+  if (!file) return;
+
+  // Validate optional config
+  const rawConfig = document.getElementById("configInput").value.trim();
+  const configErr = document.getElementById("configError");
+  if (rawConfig) {
+    try { JSON.parse(rawConfig); configErr.style.display = "none"; }
+    catch(e) {
+      configErr.textContent = "Invalid JSON: " + e.message;
+      configErr.style.display = "block";
+      if (!document.getElementById("configBody").classList.contains("open")) toggleConfig();
+      return;
+    }
+  }
+
+  // UI: loading state
+  analyzeBtn.disabled = true;
+  document.getElementById("btnIcon").textContent = "";
+  document.getElementById("btnText").innerHTML = '<span class="spinner"></span>&nbsp; Analyzing…';
+  startProgress();
+  setRight('<div class="empty-state"><div class="icon" style="opacity:0.6;font-size:40px">⏳</div><p>Analysis in progress. This may take 2–3 minutes depending on call length.</p></div>');
+
+  const form = new FormData();
+  form.append("audio_file", file);
+  if (rawConfig) form.append("client_config", rawConfig);
+
+  try {
+    const resp = await fetch(`${API}/analyze`, { method: "POST", body: form });
+    const data = await resp.json();
+    stopProgress();
+    analyzeBtn.disabled = false;
+    document.getElementById("btnIcon").textContent = "🔍";
+    document.getElementById("btnText").textContent = "Analyze Call";
+
+    if (!resp.ok) {
+      setRight(`<div class="error-box"><b>❌ Error ${resp.status}</b><br>${data.detail || JSON.stringify(data)}</div>`);
+      return;
+    }
+    renderResults(data);
+  } catch(e) {
+    stopProgress();
+    analyzeBtn.disabled = false;
+    document.getElementById("btnIcon").textContent = "🔍";
+    document.getElementById("btnText").textContent = "Analyze Call";
+    setRight(`<div class="error-box"><b>❌ Request Failed</b><br>${e.message}<br><br>Make sure the server is running at <code>${API}</code>.</div>`);
+  }
+}
+
+function setRight(html) {
+  const rp = document.getElementById("rightPanel");
+  rp.innerHTML = html;
+}
+
+// ── Render results ──
+function renderResults(d) {
+  const rp = document.getElementById("rightPanel");
+  rp.innerHTML = "";
+
+  const meta = d.metadata || {};
+  const intel = d.intelligence_summary || {};
+  const emo = d.emotional_and_tonal_analysis || {};
+  const audit = d.compliance_and_risk_audit || {};
+  const perf = d.performance_and_outcomes || {};
+  const threads = d.transcript_threads || [];
+  const risks = audit.risk_scores || {};
+  const violations = audit.policy_violations || [];
+  const flags = audit.compliance_flags || [];
+
+  // ── Request Info ──
+  rp.appendChild(el("div", "info-row", `
+    <span>🆔 <b>${d.request_id || "—"}</b></span>
+    <span>⏱ <b>${meta.processing_time_ms ? (meta.processing_time_ms/1000).toFixed(1)+"s" : "—"}</b></span>
+    <span>🌐 <b>${(meta.detected_languages||["—"]).join(", ")}</b></span>
+    <span>📊 Complexity: <b>${meta.conversation_complexity || "—"}</b></span>
+    <span>📅 <b>${new Date(meta.timestamp||Date.now()).toLocaleString()}</b></span>
+  `));
+
+  // ── Policy Status Banner ──
+  const isOk = audit.is_within_policy;
+  rp.appendChild(el("div", `policy-banner ${isOk ? "policy-ok" : "policy-fail"}`,
+    `${isOk ? "✅" : "❌"} ${isOk ? "Call is within policy — no major violations detected." : `Policy violations detected — ${violations.length} violation${violations.length!==1?"s":""} found.`}`
+  ));
+
+  // ── Time Violation ──
+  if (d.time_violation_result?.violation) {
+    rp.appendChild(el("div", "time-violation-banner",
+      `<span class="icon">⏰</span><div><b>Time Violation Detected</b><br>Call placed at ${d.time_violation_result.ist_time} IST — outside permitted 8:00 AM – 7:00 PM window. ${d.time_violation_result.description||""}</div>`
+    ));
+  }
+
+  // ── Summary ──
+  const summaryCard = card("📝 Intelligence Summary", `
+    <p class="summary-text">${esc(intel.summary || "No summary.")}</p>
+    ${intel.conversation_about ? `<p style="font-size:13px;color:var(--muted);margin:6px 0 0"><b style="color:var(--text)">About:</b> ${esc(intel.conversation_about)}</p>` : ""}
+    ${perf.recommended_action ? `<p style="font-size:13px;color:var(--muted);margin:4px 0 0"><b style="color:var(--text)">Recommended Action:</b> ${esc(perf.recommended_action)}</p>` : ""}
+    <div class="meta-pills">
+      ${pillHTML("blue", "Category: " + (intel.category || "—"))}
+      ${pillHTML("purple", "Sentiment: " + (emo.overall_sentiment || "—"))}
+      ${pillHTML("orange", "Tone: " + (emo.emotional_tone || "—"))}
+      ${pillHTML("yellow", "Outcome: " + (perf.call_outcome_prediction || "—"))}
+      ${(intel.key_topics||[]).map(t => pillHTML("blue", t)).join("")}
+    </div>
+  `);
+  rp.appendChild(summaryCard);
+
+  // ── Risk Scores ──
+  const rs = risks;
+  const score = rs.risk_escalation_score ?? 0;
+  const scoreColor = score >= 75 ? "risk-red" : score >= 50 ? "risk-orange" : score >= 25 ? "risk-yellow" : "risk-green";
+  const barColor = score >= 75 ? "#f85149" : score >= 50 ? "#db6d28" : score >= 25 ? "#d29922" : "#3fb950";
+
+  const riskCard = card("⚠️ Risk Scores", `
+    <div class="risk-grid">
+      ${riskItem("Fraud Risk",      rs.fraud_risk)}
+      ${riskItem("Escalation Risk", rs.escalation_risk)}
+      ${riskItem("Urgency",         rs.urgency_level)}
+      <div class="risk-item" style="grid-column:span 1">
+        <div class="risk-label">Risk Score</div>
+        <div class="risk-value ${scoreColor}">${score}</div>
+        <div class="score-bar-wrap">
+          <div class="score-bar" style="width:${score}%;background:${barColor}"></div>
+        </div>
+      </div>
+    </div>
+  `);
+  rp.appendChild(riskCard);
+
+  // ── Compliance Violations ──
+  let violationsHTML;
+  if (violations.length === 0) {
+    violationsHTML = `<div class="no-violations">✅ No policy violations detected.</div>`;
+  } else {
+    const rows = violations.map(v => {
+      const sev = (v.severity||"medium").toLowerCase();
+      return `<tr>
+        <td><span class="clause-badge">${esc(v.clause_id||"—")}</span></td>
+        <td><b>${esc(v.rule_name||"—")}</b><br><span class="evidence-quote">"${esc(v.evidence_quote||"")}"</span></td>
+        <td><span class="sev-badge sev-${sev}">${esc(sev)}</span></td>
+        <td>${esc(v.timestamp||"—")}</td>
+        <td style="color:var(--muted);font-size:12px">${esc(v.description||"").replace(/\n/g,"<br>")}</td>
+      </tr>`;
+    }).join("");
+    violationsHTML = `<div style="overflow-x:auto"><table class="violations-table">
+      <thead><tr>
+        <th>Clause</th><th>Rule / Evidence</th><th>Severity</th><th>Time</th><th>Detail</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`;
+  }
+  rp.appendChild(card(`🚨 Policy Violations (${violations.length})`, violationsHTML));
+
+  // ── Compliance Flags ──
+  if (flags.length > 0) {
+    const flagsHTML = `<div class="flags-wrap">${flags.map(f => pillHTML("red", f)).join("")}</div>`;
+    rp.appendChild(card("🚩 Compliance Flags", flagsHTML));
+  }
+
+  // ── Detected Threats ──
+  const threats = audit.detected_threats || [];
+  if (threats.length > 0) {
+    const tHTML = `<div class="flags-wrap">${threats.map(t => `<div style="padding:6px 12px;background:rgba(248,81,73,0.1);border:1px solid rgba(248,81,73,0.25);border-radius:8px;font-size:13px;color:#ffa198">⚠️ ${esc(t)}</div>`).join("")}</div>`;
+    rp.appendChild(card("🔴 Detected Threats", tHTML));
+  }
+
+  // ── Emotion Timeline ──
+  const egraph = emo.emotional_graph || [];
+  if (egraph.length > 0) {
+    const segments = egraph.map(g => {
+      const tone = (g.tone||"neutral").toLowerCase().replace(/\s+/g,"-");
+      return `<div class="et-segment tone-${tone}" title="${g.timestamp}: ${g.tone} (${g.acoustic_arousal})">
+        <div>${toneEmoji(g.tone)}</div>
+        <div class="et-label">${esc(g.timestamp||"")}</div>
+      </div>`;
+    }).join("");
+    rp.appendChild(card("📈 Emotion Timeline", `
+      <div class="emotion-timeline">${segments}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">
+        ${[["Neutral","#8b949e"], ["Frustrated","#d29922"], ["Angry","#f85149"], ["Threatening","#a371f7"], ["Distressed","#db6d28"], ["Aggressive","#ff6b6b"]].map(([l,c]) =>
+          `<span style="font-size:11px;color:${c}">● ${l}</span>`
+        ).join("")}
+      </div>
+    `));
+  }
+
+  // ── Agent Performance ──
+  const ap = perf.agent_performance || {};
+  const qs = ap.overall_quality_score ?? 0;
+  const qsColor = qs >= 80 ? "#3fb950" : qs >= 60 ? "#d29922" : qs >= 40 ? "#db6d28" : "#f85149";
+  const qsBar = qs >= 80 ? "#3fb950" : qs >= 60 ? "#d29922" : qs >= 40 ? "#db6d28" : "#f85149";
+  rp.appendChild(card("🧑‍💼 Agent Performance", `
+    <div class="agent-grid">
+      ${agentItem("Politeness",      ap.politeness)}
+      ${agentItem("Empathy",         ap.empathy)}
+      ${agentItem("Professionalism", ap.professionalism)}
+      <div class="agent-item">
+        <div class="agent-item-label">Repeat Complaint</div>
+        <div class="agent-item-value" style="font-size:16px">${perf.repeat_complaint_detected ? "🔁 Yes" : "✅ No"}</div>
+      </div>
+      <div class="quality-score-wrap">
+        <div class="quality-row">
+          <div>
+            <div class="agent-item-label">Overall Quality Score</div>
+            <div class="quality-score-num" style="color:${qsColor}">${qs}<span style="font-size:14px;color:var(--muted)">/100</span></div>
+          </div>
+          <div style="text-align:right">
+            <div class="agent-item-label">Final Status</div>
+            <div style="font-size:13px;font-weight:600">${esc(perf.final_status||"—")}</div>
+          </div>
+        </div>
+        <div class="score-bar-wrap" style="height:8px">
+          <div class="score-bar" style="width:${qs}%;background:${qsBar}"></div>
+        </div>
+        <div style="margin-top:10px;font-size:13px;color:var(--muted)">
+          <b style="color:var(--text)">Recommended Action:</b> ${esc(perf.recommended_action||"—")}
+        </div>
+      </div>
+    </div>
+  `));
+
+  // ── Transcript ──
+  if (threads.length > 0) {
+    const tHTML = `<div class="transcript-list">${threads.map(t => {
+      const sp = (t.speaker||"unknown").toLowerCase();
+      const rawTone = (t.tone||"neutral");
+      const toneCls = rawTone.toLowerCase().replace(/[^a-z]/g,"-").replace(/-+/g,"-").replace(/^-|-$/g,"");
+      return `<div class="turn">
+        <div class="turn-meta">
+          <span class="turn-speaker ${sp}">${esc(t.speaker||"?")}</span>
+          <span class="turn-ts">${esc(t.timestamp||"")}</span>
+        </div>
+        <div class="turn-body">
+          <span class="turn-msg">${esc(t.message||"")}</span>
+          <span class="tone-tag tone-${toneCls}">${esc(rawTone)}</span>
+          ${t.language && t.language !== "English" ? `<span style="font-size:10px;color:var(--muted);margin-left:4px">[${esc(t.language)}]</span>` : ""}
+        </div>
+      </div>`;
+    }).join("")}</div>`;
+    rp.appendChild(card(`💬 Transcript (${threads.length} turns)`, tHTML));
+  }
+
+  // ── Raw JSON ──
+  const jsonSection = card("{ } Raw JSON Output",
+    `<details><summary style="cursor:pointer;color:var(--muted);font-size:13px;margin-bottom:8px">Click to expand full JSON</summary>
+    <pre style="font-size:11px;line-height:1.5;overflow-x:auto;color:#8b949e;font-family:'SF Mono',monospace">${esc(JSON.stringify(d, null, 2))}</pre>
+    </details>`
+  );
+  rp.appendChild(jsonSection);
+}
+
+// ── Helpers ──
+function el(tag, cls, html) {
+  const e = document.createElement(tag);
+  e.className = cls;
+  e.innerHTML = html;
+  return e;
+}
+
+function card(title, bodyHTML) {
+  const c = document.createElement("div");
+  c.className = "card";
+  c.innerHTML = `<div class="card-header">${title}</div><div class="card-body">${bodyHTML}</div>`;
+  return c;
+}
+
+function pillHTML(color, text) {
+  return `<span class="pill pill-${color}">${esc(text)}</span>`;
+}
+
+function riskItem(label, value) {
+  const v = (value||"unknown").toLowerCase();
+  const cls = v === "high" ? "risk-red" : v === "medium" ? "risk-orange" : v === "low" ? "risk-green" : "";
+  return `<div class="risk-item"><div class="risk-label">${label}</div><div class="risk-value ${cls}">${v.toUpperCase()}</div></div>`;
+}
+
+function agentItem(label, value) {
+  const v = (value||"—").toLowerCase();
+  const cls = ["excellent","high","good"].includes(v) ? "risk-green" : ["fair","medium"].includes(v) ? "risk-yellow" : ["poor","low"].includes(v) ? "risk-orange" : v === "unacceptable" || v === "none" ? "risk-red" : "";
+  return `<div class="agent-item"><div class="agent-item-label">${label}</div><div class="agent-item-value ${cls}" style="font-size:16px;text-transform:capitalize">${esc(v)}</div></div>`;
+}
+
+function toneEmoji(tone) {
+  const t = (tone||"").toLowerCase();
+  if (t.includes("angry") || t.includes("aggressive")) return "😠";
+  if (t.includes("threat")) return "⚠️";
+  if (t.includes("distress")) return "😟";
+  if (t.includes("frustrat")) return "😤";
+  return "😐";
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+}
+</script>
+</body>
+</html>

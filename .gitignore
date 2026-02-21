@@ -1,6 +1,7 @@
-# Environment variables
+# Environment variables – NEVER commit API keys
 .env
-.env.local
+.env.*
+!.env.example
 
 # Python
 __pycache__/
