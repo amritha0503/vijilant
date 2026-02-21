@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -6,955 +6,787 @@
 <title>Vigilant – RBI Compliance Intelligence</title>
 <style>
   :root {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --surface2: #21262d;
-    --border: #30363d;
-    --text: #e6edf3;
-    --muted: #8b949e;
-    --accent: #58a6ff;
-    --green: #3fb950;
-    --yellow: #d29922;
-    --orange: #db6d28;
-    --red: #f85149;
-    --purple: #a371f7;
-    --critical: #ff6b6b;
-    --high: #ffa94d;
-    --medium: #ffd43b;
-    --low: #69db7c;
+    --bg: #0d1117; --surface: #161b22; --surface2: #21262d;
+    --border: #30363d; --text: #e6edf3; --muted: #8b949e;
+    --accent: #58a6ff; --green: #3fb950; --yellow: #d29922;
+    --orange: #db6d28; --red: #f85149; --purple: #a371f7;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-  /* ── Header ── */
-  header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 14px 28px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .logo {
-    width: 36px; height: 36px;
-    background: linear-gradient(135deg, #58a6ff, #a371f7);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; font-weight: 800; color: #fff;
-  }
-  header h1 { font-size: 18px; font-weight: 700; }
-  header span { color: var(--muted); font-size: 13px; margin-left: auto; }
+  /* Header */
+  header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; height: 58px; }
+  .logo { width: 32px; height: 32px; background: linear-gradient(135deg,#1f6feb,#a371f7); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; color: #fff; flex-shrink: 0; }
+  .brand { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+  .brand-sub { font-size: 11px; color: var(--muted); }
+  .stack-badges { display: flex; gap: 6px; margin-left: 18px; flex-wrap: wrap; }
+  .badge { display: flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; border: 1px solid; white-space: nowrap; }
+  .badge-python  { background:rgba(55,118,171,0.15); border-color:rgba(55,118,171,0.4); color:#4b8bbe; }
+  .badge-fastapi { background:rgba(5,150,105,0.15);  border-color:rgba(5,150,105,0.4);  color:#34d399; }
+  .badge-gemini  { background:rgba(163,113,247,0.15);border-color:rgba(163,113,247,0.4);color:#a371f7; }
+  .badge-chroma  { background:rgba(251,146,60,0.15); border-color:rgba(251,146,60,0.4); color:#fb923c; }
+  .badge-rag     { background:rgba(88,166,255,0.15); border-color:rgba(88,166,255,0.4); color:#58a6ff; }
+  .header-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .api-link { font-size: 11px; color: var(--accent); text-decoration: none; padding: 4px 10px; border: 1px solid rgba(88,166,255,0.3); border-radius: 6px; background: rgba(88,166,255,0.07); transition: background 0.15s; }
+  .api-link:hover { background: rgba(88,166,255,0.14); }
+  .status-dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; box-shadow: 0 0 6px var(--green); animation: pulse 2s ease infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-  /* ── Layout ── */
-  .layout {
-    display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: 0;
-    align-items: start;
-  }
-  .left-panel {
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    position: sticky;
-    top: 65px;
-    height: calc(100vh - 65px);
-    overflow-y: auto;
-  }
-  .right-panel {
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    min-height: calc(100vh - 65px);
-  }
+  /* Layout */
+  .layout { display: grid; grid-template-columns: 340px 1fr; gap: 0; align-items: start; }
+  .left-panel { background: var(--surface); border-right: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 16px; position: sticky; top: 58px; height: calc(100vh - 58px); overflow-y: auto; }
+  .right-panel { padding: 0; display: flex; flex-direction: column; min-height: calc(100vh - 58px); }
 
-  /* ── Upload Area ── */
-  .section-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    margin-bottom: 10px;
-  }
-  .upload-zone {
-    border: 2px dashed var(--border);
-    border-radius: 12px;
-    padding: 32px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: var(--surface2);
-    position: relative;
-  }
-  .upload-zone:hover, .upload-zone.drag-over {
-    border-color: var(--accent);
-    background: rgba(88, 166, 255, 0.06);
-  }
-  .upload-zone input[type=file] {
-    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-  }
-  .upload-icon { font-size: 36px; margin-bottom: 10px; }
-  .upload-zone p { color: var(--muted); font-size: 13px; line-height: 1.5; }
-  .upload-zone .filename {
-    color: var(--accent);
-    font-size: 13px;
-    font-weight: 600;
-    margin-top: 8px;
-    word-break: break-all;
-  }
+  /* Tabs */
+  .tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border); background: var(--surface); position: sticky; top: 58px; z-index: 50; padding: 0 20px; }
+  .tab-btn { padding: 13px 18px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; background: transparent; color: var(--muted); border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; display: flex; align-items: center; gap: 6px; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--text); border-bottom-color: var(--accent); }
+  .tab-count { background: var(--surface2); border-radius: 10px; padding: 1px 7px; font-size: 10px; font-weight: 700; }
+  .tab-panel { display: none; padding: 20px; flex-direction: column; gap: 18px; flex: 1; }
+  .tab-panel.active { display: flex; }
 
-  /* ── Config Collapsed ── */
-  .collapsible {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .collapsible-header {
-    padding: 12px 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 13px;
-    font-weight: 500;
-    user-select: none;
-  }
+  /* Upload */
+  .section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 8px; }
+  .upload-zone { border: 2px dashed var(--border); border-radius: 10px; padding: 24px 16px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--surface2); position: relative; }
+  .upload-zone:hover, .upload-zone.drag-over { border-color: var(--accent); background: rgba(88,166,255,0.06); }
+  .upload-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .upload-icon { font-size: 28px; margin-bottom: 8px; }
+  .upload-zone p { color: var(--muted); font-size: 12px; line-height: 1.5; }
+  .upload-zone .filename { color: var(--accent); font-size: 12px; font-weight: 600; margin-top: 6px; word-break: break-all; }
+
+  /* Config */
+  .collapsible { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .collapsible-header { padding: 10px 14px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 500; user-select: none; }
   .collapsible-header:hover { background: rgba(255,255,255,0.04); }
-  .collapsible-header .chevron { transition: transform 0.2s; font-size: 11px; color: var(--muted); }
+  .collapsible-header .chevron { transition: transform 0.2s; font-size: 10px; color: var(--muted); }
   .collapsible-header.open .chevron { transform: rotate(180deg); }
-  .collapsible-body { display: none; padding: 0 16px 16px; }
+  .collapsible-body { display: none; padding: 0 14px 14px; }
   .collapsible-body.open { display: block; }
-  textarea {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: "SF Mono", "Fira Code", monospace;
-    font-size: 11px;
-    padding: 12px;
-    resize: vertical;
-    min-height: 120px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
+  textarea { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:7px; color:var(--text); font-family:"SF Mono","Fira Code",monospace; font-size:11px; padding:10px; resize:vertical; min-height:110px; outline:none; transition: border-color 0.2s; }
   textarea:focus { border-color: var(--accent); }
   .config-hint { color: var(--muted); font-size: 11px; margin-bottom: 8px; }
 
-  /* ── Analyze Button ── */
-  .btn-analyze {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, #1f6feb, #388bfd);
-    border: none;
-    border-radius: 10px;
-    color: #fff;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: opacity 0.2s, transform 0.1s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-  .btn-analyze:hover:not(:disabled) { opacity: 0.9; }
-  .btn-analyze:active:not(:disabled) { transform: scale(0.99); }
-  .btn-analyze:disabled { opacity: 0.5; cursor: not-allowed; }
+  /* Button */
+  .btn-analyze { width:100%; padding:12px; background:linear-gradient(135deg,#1f6feb,#388bfd); border:none; border-radius:9px; color:#fff; font-size:14px; font-weight:700; cursor:pointer; transition:opacity 0.2s,transform 0.1s; display:flex; align-items:center; justify-content:center; gap:8px; }
+  .btn-analyze:hover:not(:disabled) { opacity:0.9; }
+  .btn-analyze:active:not(:disabled) { transform:scale(0.99); }
+  .btn-analyze:disabled { opacity:0.5; cursor:not-allowed; }
+  .spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
 
-  /* ── Spinner ── */
-  .spinner {
-    width: 18px; height: 18px;
-    border: 3px solid rgba(255,255,255,0.3);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  /* States */
+  .empty-state { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; gap:12px; color:var(--muted); text-align:center; padding: 60px 20px; }
+  .empty-state .icon { font-size:44px; opacity:0.35; }
+  .empty-state p { font-size:14px; max-width:280px; line-height:1.6; }
+  .error-box { background:rgba(248,81,73,0.12); border:1px solid rgba(248,81,73,0.4); border-radius:10px; padding:14px 18px; color:#ffa198; font-size:13px; line-height:1.6; }
 
-  /* ── Empty / Error State ── */
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    gap: 12px;
-    color: var(--muted);
-    text-align: center;
-  }
-  .empty-state .icon { font-size: 48px; opacity: 0.4; }
-  .empty-state p { font-size: 14px; max-width: 280px; line-height: 1.5; }
-  .error-box {
-    background: rgba(248, 81, 73, 0.12);
-    border: 1px solid rgba(248, 81, 73, 0.4);
-    border-radius: 10px;
-    padding: 16px 20px;
-    color: #ffa198;
-    font-size: 13px;
-    line-height: 1.6;
-  }
+  /* Cards */
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+  .card-header { padding:12px 18px; border-bottom:1px solid var(--border); font-size:12px; font-weight:600; background:var(--surface2); display:flex; align-items:center; gap:8px; }
+  .card-body { padding:18px; }
 
-  /* ── Cards ── */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-  }
-  .card-header {
-    padding: 14px 20px;
-    border-bottom: 1px solid var(--border);
-    font-size: 13px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--surface2);
-  }
-  .card-body { padding: 20px; }
+  /* Summary */
+  .summary-text { font-size:14px; line-height:1.75; color:#c9d1d9; }
+  .meta-pills { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }
+  .pill { padding:3px 11px; border-radius:20px; font-size:11px; font-weight:500; border:1px solid; }
+  .pill-blue   { background:rgba(88,166,255,0.12);  border-color:rgba(88,166,255,0.3);  color:#58a6ff; }
+  .pill-green  { background:rgba(63,185,80,0.12);   border-color:rgba(63,185,80,0.3);   color:#3fb950; }
+  .pill-red    { background:rgba(248,81,73,0.12);   border-color:rgba(248,81,73,0.3);   color:#f85149; }
+  .pill-purple { background:rgba(163,113,247,0.12); border-color:rgba(163,113,247,0.3); color:#a371f7; }
+  .pill-yellow { background:rgba(210,153,34,0.12);  border-color:rgba(210,153,34,0.3);  color:#d29922; }
+  .pill-orange { background:rgba(219,109,40,0.12);  border-color:rgba(219,109,40,0.3);  color:#db6d28; }
 
-  /* ── Summary ── */
-  .summary-text { font-size: 14px; line-height: 1.7; color: #c9d1d9; }
-  .meta-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 14px;
-  }
-  .pill {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-    border: 1px solid;
-  }
-  .pill-blue  { background: rgba(88,166,255,0.12); border-color: rgba(88,166,255,0.3); color: #58a6ff; }
-  .pill-green { background: rgba(63,185,80,0.12);  border-color: rgba(63,185,80,0.3);  color: #3fb950; }
-  .pill-red   { background: rgba(248,81,73,0.12);  border-color: rgba(248,81,73,0.3);  color: #f85149; }
-  .pill-purple{ background: rgba(163,113,247,0.12);border-color: rgba(163,113,247,0.3);color: #a371f7; }
-  .pill-yellow{ background: rgba(210,153,34,0.12); border-color: rgba(210,153,34,0.3); color: #d29922; }
-  .pill-orange{ background: rgba(219,109,40,0.12); border-color: rgba(219,109,40,0.3); color: #db6d28; }
+  /* Risk */
+  .risk-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; }
+  .risk-item { background:var(--surface2); border:1px solid var(--border); border-radius:9px; padding:12px 14px; text-align:center; }
+  .risk-label { font-size:10px; color:var(--muted); margin-bottom:5px; text-transform:uppercase; letter-spacing:0.05em; }
+  .risk-value { font-size:18px; font-weight:700; }
+  .risk-green { color:var(--green); } .risk-yellow { color:var(--yellow); } .risk-orange { color:var(--orange); } .risk-red { color:var(--red); }
+  .score-bar-wrap { margin-top:4px; background:var(--border); border-radius:4px; height:5px; overflow:hidden; }
+  .score-bar { height:100%; border-radius:4px; transition:width 1s ease; }
 
-  /* ── Risk Grid ── */
-  .risk-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 12px;
-  }
-  .risk-item {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px 16px;
-    text-align: center;
-  }
-  .risk-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
-  .risk-value { font-size: 20px; font-weight: 700; }
-  .risk-green  { color: var(--green); }
-  .risk-yellow { color: var(--yellow); }
-  .risk-orange { color: var(--orange); }
-  .risk-red    { color: var(--red); }
-  .score-bar-wrap { margin-top: 4px; background: var(--border); border-radius: 4px; height: 6px; overflow: hidden; }
-  .score-bar { height: 100%; border-radius: 4px; transition: width 1s ease; }
+  /* Violations */
+  .violations-table { width:100%; border-collapse:collapse; font-size:12px; }
+  .violations-table th { text-align:left; padding:7px 11px; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); border-bottom:1px solid var(--border); }
+  .violations-table td { padding:9px 11px; border-bottom:1px solid rgba(48,54,61,0.5); vertical-align:top; line-height:1.5; }
+  .violations-table tr:last-child td { border-bottom:none; }
+  .violations-table tr:hover td { background:rgba(255,255,255,0.02); }
+  .clause-badge { display:inline-block; padding:2px 7px; border-radius:5px; font-size:10px; font-weight:700; font-family:monospace; background:rgba(88,166,255,0.15); color:#58a6ff; border:1px solid rgba(88,166,255,0.25); white-space:nowrap; }
+  .sev-badge { display:inline-block; padding:2px 7px; border-radius:5px; font-size:10px; font-weight:700; text-transform:uppercase; }
+  .sev-critical { background:rgba(255,107,107,0.2); color:#ff6b6b; border:1px solid rgba(255,107,107,0.4); }
+  .sev-high     { background:rgba(255,169,77,0.2);  color:#ffa94d; border:1px solid rgba(255,169,77,0.4); }
+  .sev-medium   { background:rgba(255,212,59,0.2);  color:#ffd43b; border:1px solid rgba(255,212,59,0.4); }
+  .sev-low      { background:rgba(105,219,124,0.2); color:#69db7c; border:1px solid rgba(105,219,124,0.4); }
+  .evidence-quote { font-style:italic; color:var(--muted); font-size:11px; margin-top:3px; display:block; padding-left:7px; border-left:2px solid var(--border); }
+  .no-violations { color:var(--green); font-size:13px; padding:10px 0; display:flex; align-items:center; gap:8px; }
+  .flags-wrap { display:flex; flex-wrap:wrap; gap:8px; }
 
-  /* ── Violations Table ── */
-  .violations-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .violations-table th {
-    text-align: left;
-    padding: 8px 12px;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--muted);
-    border-bottom: 1px solid var(--border);
-  }
-  .violations-table td {
-    padding: 10px 12px;
-    border-bottom: 1px solid rgba(48,54,61,0.5);
-    vertical-align: top;
-    line-height: 1.5;
-  }
-  .violations-table tr:last-child td { border-bottom: none; }
-  .violations-table tr:hover td { background: rgba(255,255,255,0.02); }
-  .clause-badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 700;
-    font-family: monospace;
-    background: rgba(88,166,255,0.15);
-    color: #58a6ff;
-    border: 1px solid rgba(88,166,255,0.25);
-    white-space: nowrap;
-  }
-  .sev-badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-  }
-  .sev-critical { background: rgba(255,107,107,0.2); color: #ff6b6b; border: 1px solid rgba(255,107,107,0.4); }
-  .sev-high     { background: rgba(255,169,77,0.2);  color: #ffa94d; border: 1px solid rgba(255,169,77,0.4); }
-  .sev-medium   { background: rgba(255,212,59,0.2);  color: #ffd43b; border: 1px solid rgba(255,212,59,0.4); }
-  .sev-low      { background: rgba(105,219,124,0.2); color: #69db7c; border: 1px solid rgba(105,219,124,0.4); }
-  .evidence-quote {
-    font-style: italic;
-    color: var(--muted);
-    font-size: 12px;
-    margin-top: 4px;
-    display: block;
-    padding-left: 8px;
-    border-left: 2px solid var(--border);
-  }
-  .no-violations {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--green);
-    font-size: 14px;
-    padding: 12px 0;
-  }
+  /* Emotion */
+  .tone-neutral    { background:rgba(139,148,158,0.3); color:#8b949e; }
+  .tone-frustrated { background:rgba(210,153,34,0.35); color:#d29922; }
+  .tone-angry      { background:rgba(248,81,73,0.35);  color:#f85149; }
+  .tone-threatening{ background:rgba(163,113,247,0.4); color:#a371f7; }
+  .tone-distressed { background:rgba(219,109,40,0.35); color:#db6d28; }
+  .tone-aggressive { background:rgba(255,107,107,0.4); color:#ff6b6b; }
+  .eg-wrap { position:relative; }
+  .eg-tooltip { display:none; position:absolute; background:#1c2128; border:1px solid var(--border); border-radius:8px; padding:7px 11px; font-size:11px; pointer-events:none; z-index:10; white-space:nowrap; box-shadow:0 4px 16px rgba(0,0,0,0.45); line-height:1.7; }
+  .eg-dot { cursor:pointer; }
+  .eg-legend { display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
+  .eg-legend span { font-size:11px; }
+  .eg-axis-label { font-size:10px; fill:#8b949e; }
 
-  /* ── Compliance Flags ── */
-  .flags-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+  /* Agent */
+  .agent-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .agent-item { background:var(--surface2); border:1px solid var(--border); border-radius:9px; padding:12px; }
+  .agent-item-label { font-size:10px; color:var(--muted); margin-bottom:7px; text-transform:uppercase; letter-spacing:0.05em; }
+  .agent-item-value { font-size:20px; font-weight:700; }
+  .quality-score-wrap { grid-column:span 2; background:var(--surface2); border:1px solid var(--border); border-radius:9px; padding:12px 14px; }
+  .quality-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .quality-score-num { font-size:26px; font-weight:800; }
 
-  /* ── Emotion Timeline ── */
-  .emotion-timeline {
-    display: flex;
-    align-items: stretch;
-    gap: 0;
-    border-radius: 8px;
-    overflow: hidden;
-    margin-bottom: 16px;
-    min-height: 40px;
-  }
-  .et-segment {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 8px 4px;
-    font-size: 11px;
-    font-weight: 600;
-    transition: opacity 0.2s;
-  }
-  .et-label { font-size: 10px; margin-top: 2px; opacity: 0.8; }
-  .tone-neutral    { background: rgba(139,148,158,0.3); color: #8b949e; }
-  .tone-frustrated { background: rgba(210,153,34,0.35); color: #d29922; }
-  .tone-angry      { background: rgba(248,81,73,0.35);  color: #f85149; }
-  .tone-threatening{ background: rgba(163,113,247,0.4); color: #a371f7; }
-  .tone-distressed { background: rgba(219,109,40,0.35); color: #db6d28; }
-  .tone-aggressive { background: rgba(255,107,107,0.4); color: #ff6b6b; }
+  /* Transcript */
+  .transcript-list { display:flex; flex-direction:column; gap:8px; }
+  .turn { display:flex; gap:10px; align-items:flex-start; }
+  .turn-meta { min-width:64px; text-align:right; }
+  .turn-speaker { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:2px 5px; border-radius:4px; display:inline-block; }
+  .turn-speaker.agent    { background:rgba(88,166,255,0.2); color:#58a6ff; }
+  .turn-speaker.customer { background:rgba(63,185,80,0.2);  color:#3fb950; }
+  .turn-speaker.unknown  { background:var(--surface2); color:var(--muted); }
+  .turn-ts { font-size:10px; color:var(--muted); margin-top:3px; display:block; }
+  .turn-body { flex:1; }
+  .turn-msg { font-size:12px; line-height:1.6; color:#c9d1d9; }
+  .tone-tag { display:inline-block; padding:1px 6px; border-radius:10px; font-size:9px; font-weight:600; margin-left:5px; vertical-align:middle; }
+  .tone-positive         { background:rgba(63,185,80,0.2);   color:#3fb950; }
+  .tone-neutral          { background:rgba(139,148,158,0.2); color:#8b949e; }
+  .tone-angry-frustrated { background:rgba(248,81,73,0.2);   color:#f85149; }
+  .tone-fearful-anxious  { background:rgba(219,109,40,0.2);  color:#db6d28; }
+  .tone-urgent           { background:rgba(163,113,247,0.2); color:#a371f7; }
 
-  /* ── Agent Scores ── */
-  .agent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .agent-item {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px;
-  }
-  .agent-item-label { font-size: 11px; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
-  .agent-item-value { font-size: 22px; font-weight: 700; }
-  .quality-score-wrap {
-    grid-column: span 2;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px 16px;
-  }
-  .quality-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-  .quality-score-num { font-size: 28px; font-weight: 800; }
-  .quality-desc { font-size: 12px; color: var(--muted); }
+  /* Banners */
+  .time-violation-banner { background:rgba(248,81,73,0.12); border:1px solid rgba(248,81,73,0.35); border-radius:9px; padding:12px 16px; display:flex; align-items:center; gap:10px; font-size:12px; color:#ffa198; }
+  .time-violation-banner .icon { font-size:20px; flex-shrink:0; }
+  .info-row { display:flex; flex-wrap:wrap; gap:14px; font-size:11px; color:var(--muted); padding:10px 0; border-top:1px solid var(--border); }
+  .info-row span b { color:var(--text); }
+  .policy-banner { border-radius:9px; padding:12px 16px; display:flex; align-items:center; gap:10px; font-size:13px; font-weight:600; }
+  .policy-ok   { background:rgba(63,185,80,0.12);  border:1px solid rgba(63,185,80,0.3);  color:#3fb950; }
+  .policy-fail { background:rgba(248,81,73,0.12);  border:1px solid rgba(248,81,73,0.3);  color:#f85149; }
 
-  /* ── Transcript ── */
-  .transcript-list { display: flex; flex-direction: column; gap: 10px; }
-  .turn {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-  }
-  .turn-meta { min-width: 70px; text-align: right; }
-  .turn-speaker {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 2px 6px;
-    border-radius: 4px;
-    display: inline-block;
-  }
-  .turn-speaker.agent    { background: rgba(88,166,255,0.2); color: #58a6ff; }
-  .turn-speaker.customer { background: rgba(63,185,80,0.2);  color: #3fb950; }
-  .turn-speaker.unknown  { background: var(--surface2); color: var(--muted); }
-  .turn-ts { font-size: 10px; color: var(--muted); margin-top: 3px; display: block; }
-  .turn-body { flex: 1; }
-  .turn-msg { font-size: 13px; line-height: 1.6; color: #c9d1d9; }
-  .tone-tag {
-    display: inline-block;
-    padding: 1px 7px;
-    border-radius: 10px;
-    font-size: 10px;
-    font-weight: 600;
-    margin-left: 6px;
-    vertical-align: middle;
-  }
-  .tone-positive        { background: rgba(63,185,80,0.2);   color: #3fb950; }
-  .tone-neutral         { background: rgba(139,148,158,0.2); color: #8b949e; }
-  .tone-angry-frustrated{ background: rgba(248,81,73,0.2);   color: #f85149; }
-  .tone-fearful-anxious { background: rgba(219,109,40,0.2);  color: #db6d28; }
-  .tone-urgent          { background: rgba(163,113,247,0.2); color: #a371f7; }
+  /* Progress */
+  .progress-steps { display:flex; flex-direction:column; gap:8px; padding:14px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; }
+  .step { display:flex; align-items:center; gap:10px; font-size:12px; color:var(--muted); }
+  .step.active { color:var(--accent); }
+  .step.done   { color:var(--green); }
+  .step-dot { width:20px; height:20px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; background:var(--border); color:var(--muted); }
+  .step.active .step-dot { background:rgba(88,166,255,0.2); color:var(--accent); border:1px solid var(--accent); animation:blink 1.5s ease infinite; }
+  .step.done .step-dot   { background:rgba(63,185,80,0.2);  color:var(--green);  border:1px solid var(--green); }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-  /* ── Time violation banner ── */
-  .time-violation-banner {
-    background: rgba(248,81,73,0.12);
-    border: 1px solid rgba(248,81,73,0.35);
-    border-radius: 10px;
-    padding: 14px 18px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 13px;
-    color: #ffa198;
-  }
-  .time-violation-banner .icon { font-size: 22px; flex-shrink: 0; }
+  /* JSON Viewer */
+  .json-toolbar { display:flex; align-items:center; gap:10px; margin-bottom:12px; padding:10px 14px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; }
+  .json-stats { font-size:11px; color:var(--muted); flex:1; }
+  .json-stats b { color:var(--text); }
+  .copy-btn { padding:5px 12px; background:rgba(88,166,255,0.1); border:1px solid rgba(88,166,255,0.3); border-radius:6px; color:var(--accent); font-size:11px; font-weight:600; cursor:pointer; transition:background 0.15s; }
+  .copy-btn:hover { background:rgba(88,166,255,0.2); }
+  .copy-btn.copied { background:rgba(63,185,80,0.15); border-color:rgba(63,185,80,0.4); color:var(--green); }
+  .json-pre { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:16px; overflow-x:auto; font-family:"SF Mono","Fira Code","Consolas",monospace; font-size:12px; line-height:1.7; white-space:pre; }
+  .jk { color:#79c0ff; } .js { color:#a5d6ff; } .jn { color:#f2cc60; } .jb { color:#ff7b72; } .jnull { color:#8b949e; }
 
-  /* ── Request info ── */
-  .info-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    font-size: 12px;
-    color: var(--muted);
-    padding: 12px 0;
-    border-top: 1px solid var(--border);
-  }
-  .info-row span b { color: var(--text); }
+  /* Schema */
+  .schema-block { margin-bottom:18px; }
+  .schema-block h3 { font-size:12px; font-weight:700; color:var(--text); margin-bottom:10px; padding-bottom:7px; border-bottom:1px solid var(--border); }
+  .field-table { width:100%; border-collapse:collapse; font-size:12px; }
+  .field-table th { text-align:left; padding:6px 10px; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); border-bottom:1px solid var(--border); }
+  .field-table td { padding:8px 10px; border-bottom:1px solid rgba(48,54,61,0.4); vertical-align:top; line-height:1.5; }
+  .field-table tr:last-child td { border-bottom:none; }
+  .field-table tr:hover td { background:rgba(255,255,255,0.02); }
+  .ftype { font-family:monospace; font-size:11px; color:#ff7b72; }
+  .fname { font-family:monospace; font-size:12px; font-weight:600; color:#79c0ff; }
 
-  /* ── Policy status banner ── */
-  .policy-banner {
-    border-radius: 10px;
-    padding: 14px 18px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 14px;
-    font-weight: 600;
-  }
-  .policy-ok   { background: rgba(63,185,80,0.12);  border: 1px solid rgba(63,185,80,0.3);  color: #3fb950; }
-  .policy-fail { background: rgba(248,81,73,0.12);  border: 1px solid rgba(248,81,73,0.3);  color: #f85149; }
+  /* API Reference */
+  .endpoint-block { border:1px solid var(--border); border-radius:9px; overflow:hidden; margin-bottom:14px; }
+  .endpoint-header { padding:12px 16px; background:var(--surface2); display:flex; align-items:center; gap:12px; }
+  .method-badge { padding:3px 9px; border-radius:5px; font-size:10px; font-weight:800; letter-spacing:0.05em; }
+  .method-get  { background:rgba(63,185,80,0.2);  color:#3fb950; border:1px solid rgba(63,185,80,0.35); }
+  .method-post { background:rgba(88,166,255,0.2); color:#58a6ff; border:1px solid rgba(88,166,255,0.35); }
+  .endpoint-path { font-family:monospace; font-size:13px; font-weight:600; color:var(--text); }
+  .endpoint-desc { font-size:12px; color:var(--muted); margin-left:auto; }
+  .endpoint-body { padding:14px 16px; }
+  .curl-block { background:var(--bg); border:1px solid var(--border); border-radius:7px; padding:12px 14px; font-family:"SF Mono","Fira Code",monospace; font-size:11px; line-height:1.7; color:#8b949e; overflow-x:auto; white-space:pre; }
+  .curl-block .k { color:#79c0ff; } .curl-block .s { color:#a5d6ff; } .curl-block .c { color:#3fb950; }
+  .param-row { display:grid; grid-template-columns:150px 80px 1fr; gap:10px; padding:6px 0; border-bottom:1px solid rgba(48,54,61,0.3); font-size:12px; }
+  .param-row:last-child { border-bottom:none; }
+  .param-name { font-family:monospace; font-weight:600; color:#79c0ff; }
+  .param-type { color:#ff7b72; font-family:monospace; font-size:11px; }
+  .param-desc { color:var(--muted); }
+  .resp-tag { display:inline-block; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:700; background:rgba(63,185,80,0.15); color:#3fb950; border:1px solid rgba(63,185,80,0.3); margin-bottom:8px; }
+  .section-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin:12px 0 8px; }
 
-  /* ── Scrollbar ── */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: #484f58; }
+  /* Pipeline card */
+  .pipeline-card { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:12px 14px; }
+  .pipeline-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:10px; }
+  .pipeline-step { display:flex; align-items:center; gap:8px; padding:5px 0; font-size:11px; color:#c9d1d9; }
+  .pipeline-step .p-dot { width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; flex-shrink:0; }
+  .p-audio  { background:rgba(88,166,255,0.2);  color:#58a6ff;  border:1px solid rgba(88,166,255,0.4); }
+  .p-rag    { background:rgba(251,146,60,0.2);  color:#fb923c;  border:1px solid rgba(251,146,60,0.4); }
+  .p-gemini { background:rgba(163,113,247,0.2); color:#a371f7;  border:1px solid rgba(163,113,247,0.4); }
+  .p-json   { background:rgba(63,185,80,0.2);   color:#3fb950;  border:1px solid rgba(63,185,80,0.4); }
 
-  /* ── Progress steps ── */
-  .progress-steps {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 16px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-  }
-  .step { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--muted); }
-  .step.active { color: var(--accent); }
-  .step.done   { color: var(--green); }
-  .step-dot {
-    width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 700;
-    background: var(--border); color: var(--muted);
-  }
-  .step.active .step-dot { background: rgba(88,166,255,0.2); color: var(--accent); border: 1px solid var(--accent); animation: pulse 1.5s ease infinite; }
-  .step.done .step-dot   { background: rgba(63,185,80,0.2);  color: var(--green);  border: 1px solid var(--green); }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+  /* Scrollbar */
+  ::-webkit-scrollbar { width:5px; height:5px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+  ::-webkit-scrollbar-thumb:hover { background:#484f58; }
 </style>
 </head>
 <body>
 
 <header>
   <div class="logo">V</div>
-  <h1>Vigilant</h1>
-  <span>RBI Compliance Intelligence Platform</span>
+  <div>
+    <div class="brand">Vigilant <span class="brand-sub">/ RBI Compliance Intelligence</span></div>
+  </div>
+  <div class="stack-badges">
+    <span class="badge badge-fastapi">&#9889; FastAPI</span>
+    <span class="badge badge-gemini">&#10022; Gemini 2.5 Flash</span>
+    <span class="badge badge-chroma">&#9679; ChromaDB</span>
+    <span class="badge badge-rag">&#128269; RAG &middot; 24 Clauses</span>
+    <span class="badge badge-python">&#128013; Python 3.13</span>
+  </div>
+  <div class="header-right">
+    <div class="status-dot" title="Server online"></div>
+    <a class="api-link" href="/docs" target="_blank">Swagger UI &#8599;</a>
+    <a class="api-link" href="/redoc" target="_blank">ReDoc &#8599;</a>
+  </div>
 </header>
 
 <div class="layout">
 
-  <!-- ════ LEFT PANEL ════ -->
   <div class="left-panel">
     <div>
-      <div class="section-label">1. Upload Call Recording</div>
+      <div class="section-label">1 &middot; Upload Call Recording</div>
       <div class="upload-zone" id="uploadZone">
         <input type="file" id="audioInput" accept=".mp3,.wav,.ogg,.m4a,.flac,.webm,.mp4" />
-        <div class="upload-icon">🎙️</div>
-        <p>Drag &amp; drop your audio file here<br>or click to browse</p>
-        <p style="margin-top:6px;font-size:11px;color:#484f58">MP3 · WAV · OGG · M4A · FLAC</p>
+        <div class="upload-icon">&#127897;&#65039;</div>
+        <p>Drag &amp; drop audio or click to browse</p>
+        <p style="margin-top:5px;font-size:10px;color:#484f58">MP3 &middot; WAV &middot; OGG &middot; M4A &middot; FLAC &middot; WebM</p>
         <div class="filename" id="fileName"></div>
       </div>
     </div>
 
     <div>
-      <div class="section-label">2. Client Configuration (optional)</div>
+      <div class="section-label">2 &middot; Client Config (optional)</div>
       <div class="collapsible">
         <div class="collapsible-header" id="configToggle" onclick="toggleConfig()">
-          <span>⚙️ Override Default Config</span>
-          <span class="chevron">▼</span>
+          <span>&#9881;&#65039; Override RBI Config</span>
+          <span class="chevron">&#9660;</span>
         </div>
         <div class="collapsible-body" id="configBody">
-          <p class="config-hint" style="margin-top:10px">Paste a JSON object to override the default RBI config. Omitted fields use defaults.</p>
+          <p class="config-hint" style="margin-top:8px">JSON object &mdash; omitted fields use platform defaults.</p>
           <textarea id="configInput" placeholder='{
   "business_domain": "Banking / Debt Recovery",
-  "monitored_products": ["Credit Card", "Personal Loan"],
-  "risk_triggers": ["Harassment", "Jail Mention"],
+  "monitored_products": ["Credit Card"],
+  "risk_triggers": ["Harassment"],
   "custom_rules": []
 }'></textarea>
-          <div id="configError" style="color:#f85149;font-size:11px;margin-top:6px;display:none"></div>
-          <button onclick="loadDefaultConfig()" style="margin-top:8px;padding:6px 12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:12px;cursor:pointer">Load Default Template</button>
+          <div id="configError" style="color:#f85149;font-size:11px;margin-top:5px;display:none"></div>
+          <button onclick="loadDefaultConfig()" style="margin-top:7px;padding:5px 10px;background:var(--surface);border:1px solid var(--border);border-radius:5px;color:var(--muted);font-size:11px;cursor:pointer">Load Default Template</button>
         </div>
       </div>
     </div>
 
     <button class="btn-analyze" id="analyzeBtn" onclick="analyze()" disabled>
-      <span id="btnIcon">🔍</span>
+      <span id="btnIcon">&#128269;</span>
       <span id="btnText">Analyze Call</span>
     </button>
 
-    <!-- Progress (shown during analysis) -->
     <div class="progress-steps" id="progressSteps" style="display:none">
       <div class="step" id="step1"><div class="step-dot">1</div> Processing Audio</div>
       <div class="step" id="step2"><div class="step-dot">2</div> Transcribing &amp; Diarizing</div>
       <div class="step" id="step3"><div class="step-dot">3</div> Retrieving Policy Clauses</div>
       <div class="step" id="step4"><div class="step-dot">4</div> Compliance Analysis</div>
-      <div class="step" id="step5"><div class="step-dot">5</div> Building Report</div>
+      <div class="step" id="step5"><div class="step-dot">5</div> Building JSON Report</div>
     </div>
 
-    <!-- Mini info -->
-    <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-top:auto;padding-top:16px;border-top:1px solid var(--border)">
-      <b style="color:var(--text)">API Endpoints</b><br>
-      <code style="color:var(--accent)">GET /config</code> — default config<br>
-      <code style="color:var(--accent)">GET /config/schema</code> — field docs<br>
-      <code style="color:var(--accent)">POST /config/validate</code> — validate config<br>
-      <code style="color:var(--accent)">GET /docs</code> — Swagger UI
+    <div class="pipeline-card">
+      <div class="pipeline-title">Backend Pipeline</div>
+      <div class="pipeline-step"><div class="p-dot p-audio">&#127897;</div> Audio &#8594; Gemini transcriber</div>
+      <div class="pipeline-step" style="padding-left:22px"><span style="color:var(--border)">&#8595;</span></div>
+      <div class="pipeline-step"><div class="p-dot p-rag">&#128269;</div> ChromaDB RAG &middot; 24 clauses, k=8</div>
+      <div class="pipeline-step" style="padding-left:22px"><span style="color:var(--border)">&#8595;</span></div>
+      <div class="pipeline-step"><div class="p-dot p-gemini">&#10022;</div> Gemini 2.5 Flash compliance engine</div>
+      <div class="pipeline-step" style="padding-left:22px"><span style="color:var(--border)">&#8595;</span></div>
+      <div class="pipeline-step"><div class="p-dot p-json">{}</div> Structured JSON output schema</div>
+    </div>
+
+    <div style="font-size:11px;color:var(--muted);line-height:1.9;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;color:var(--text)">API Endpoints</div>
+      <div><span style="color:#58a6ff;font-family:monospace;font-size:10px;font-weight:700">POST</span> <code style="color:var(--accent)"> /analyze</code></div>
+      <div><span style="color:#3fb950;font-family:monospace;font-size:10px;font-weight:700">GET &nbsp;</span> <code style="color:var(--accent)"> /config</code></div>
+      <div><span style="color:#3fb950;font-family:monospace;font-size:10px;font-weight:700">GET &nbsp;</span> <code style="color:var(--accent)"> /config/schema</code></div>
+      <div><span style="color:#58a6ff;font-family:monospace;font-size:10px;font-weight:700">POST</span> <code style="color:var(--accent)"> /config/validate</code></div>
+      <div><span style="color:#3fb950;font-family:monospace;font-size:10px;font-weight:700">GET &nbsp;</span> <code style="color:var(--accent)"> /health</code></div>
     </div>
   </div>
 
-  <!-- ════ RIGHT PANEL ════ -->
-  <div class="right-panel" id="rightPanel">
-    <div class="empty-state" id="emptyState">
-      <div class="icon">📋</div>
-      <p>Upload a call recording and click <b>Analyze Call</b> to generate a compliance audit report.</p>
+  <div class="right-panel">
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('analysis')" id="tab-analysis">&#128202; Analysis</button>
+      <button class="tab-btn" onclick="switchTab('json')" id="tab-json">{ } JSON Output <span class="tab-count" id="json-tab-cnt">&#8212;</span></button>
+      <button class="tab-btn" onclick="switchTab('api')" id="tab-api">&#128302; API Reference</button>
+      <button class="tab-btn" onclick="switchTab('schema')" id="tab-schema">&#128208; Output Schema</button>
     </div>
-  </div>
 
+    <div class="tab-panel active" id="panel-analysis">
+      <div class="empty-state" id="emptyState">
+        <div class="icon">&#128203;</div>
+        <p>Upload a debt recovery call recording and click <b>Analyze Call</b> to generate a full RBI compliance audit report.</p>
+        <p style="font-size:11px;opacity:0.6;margin-top:8px">Powered by Gemini 2.5 Flash + ChromaDB RAG</p>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-json">
+      <div class="empty-state">
+        <div class="icon">{ }</div>
+        <p>Run an analysis to see the full structured JSON output here.</p>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-api">
+      <div class="card">
+        <div class="card-header">&#128302; REST API Reference &mdash; <span style="color:var(--muted);font-weight:400">Base URL: <code style="color:var(--accent)">http://localhost:8000</code></span></div>
+        <div class="card-body" style="padding:16px">
+
+          <div class="endpoint-block">
+            <div class="endpoint-header">
+              <span class="method-badge method-post">POST</span>
+              <span class="endpoint-path">/analyze</span>
+              <span class="endpoint-desc">Submit audio for full RBI compliance analysis</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="section-title">Request &middot; multipart/form-data</div>
+              <div class="param-row" style="font-size:10px;color:var(--muted);font-weight:700;border-bottom:1px solid var(--border);padding-bottom:4px"><div>Parameter</div><div>Type</div><div>Description</div></div>
+              <div class="param-row"><div class="param-name">audio_file</div><div class="param-type">file *</div><div class="param-desc">Audio recording (MP3/WAV/OGG/M4A/FLAC/WebM). Required.</div></div>
+              <div class="param-row"><div class="param-name">client_config</div><div class="param-type">string</div><div class="param-desc">Optional JSON string overriding default RBI config (business domain, risk triggers, custom rules).</div></div>
+              <div class="section-title" style="margin-top:14px">cURL Example</div>
+              <div class="curl-block"><span class="k">curl</span> -X POST <span class="s">"http://localhost:8000/analyze"</span> \
+  -F <span class="s">"audio_file=@/path/to/call.mp3"</span> \
+  -F <span class="s">'client_config={"business_domain":"Banking / Debt Recovery"}'</span></div>
+              <div class="section-title" style="margin-top:14px">Response <span class="resp-tag">200 OK</span></div>
+              <div class="curl-block"><span class="k">"request_id"</span>: <span class="s">"uuid-v4"</span>,
+<span class="k">"metadata"</span>: { <span class="c">// processing_time_ms, detected_languages, conversation_complexity</span> },
+<span class="k">"intelligence_summary"</span>: { <span class="c">// summary, category, key_topics, conversation_about</span> },
+<span class="k">"emotional_and_tonal_analysis"</span>: { <span class="c">// overall_sentiment, emotional_graph[]</span> },
+<span class="k">"compliance_and_risk_audit"</span>: { <span class="c">// is_within_policy, policy_violations[], risk_scores</span> },
+<span class="k">"performance_and_outcomes"</span>: { <span class="c">// agent_performance, final_status, recommended_action</span> },
+<span class="k">"transcript_threads"</span>: [ <span class="c">// speaker, message, tone, timestamp, language</span> ],
+<span class="k">"time_violation_result"</span>: { <span class="c">// IST time check vs 8 AM-7 PM window</span> }</div>
+            </div>
+          </div>
+
+          <div class="endpoint-block">
+            <div class="endpoint-header">
+              <span class="method-badge method-get">GET</span>
+              <span class="endpoint-path">/config</span>
+              <span class="endpoint-desc">Returns the default RBI client configuration</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="curl-block"><span class="k">curl</span> <span class="s">"http://localhost:8000/config"</span>
+<span class="c"># Returns: { business_domain, monitored_products[], risk_triggers[], custom_rules[] }</span></div>
+            </div>
+          </div>
+
+          <div class="endpoint-block">
+            <div class="endpoint-header">
+              <span class="method-badge method-get">GET</span>
+              <span class="endpoint-path">/config/schema</span>
+              <span class="endpoint-desc">JSON Schema docs for all config fields</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="curl-block"><span class="k">curl</span> <span class="s">"http://localhost:8000/config/schema"</span></div>
+            </div>
+          </div>
+
+          <div class="endpoint-block">
+            <div class="endpoint-header">
+              <span class="method-badge method-post">POST</span>
+              <span class="endpoint-path">/config/validate</span>
+              <span class="endpoint-desc">Validates a client config before analysis</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="curl-block"><span class="k">curl</span> -X POST <span class="s">"http://localhost:8000/config/validate"</span> \
+  -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{"business_domain":"NBFC","custom_rules":[]}'</span></div>
+            </div>
+          </div>
+
+          <div class="endpoint-block" style="margin-bottom:0">
+            <div class="endpoint-header">
+              <span class="method-badge method-get">GET</span>
+              <span class="endpoint-path">/health</span>
+              <span class="endpoint-desc">Server liveness check</span>
+            </div>
+            <div class="endpoint-body">
+              <div class="curl-block"><span class="k">curl</span> <span class="s">"http://localhost:8000/health"</span>
+<span class="c"># Returns: {"status":"ok","message":"Vigilant API is running"}</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-schema">
+      <div class="card">
+        <div class="card-header">&#128208; JSON Output Schema &mdash; Full Response Structure</div>
+        <div class="card-body">
+
+          <div class="schema-block">
+            <h3>&#128310; Root Level Fields</h3>
+            <table class="field-table">
+              <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+              <tr><td class="fname">request_id</td><td class="ftype">string</td><td>UUID v4 unique per request</td></tr>
+              <tr><td class="fname">metadata</td><td class="ftype">object</td><td>Processing metadata (time, languages, complexity)</td></tr>
+              <tr><td class="fname">intelligence_summary</td><td class="ftype">object</td><td>AI-generated call summary, category, topics</td></tr>
+              <tr><td class="fname">emotional_and_tonal_analysis</td><td class="ftype">object</td><td>Sentiment, emotional tone, arousal timeline</td></tr>
+              <tr><td class="fname">compliance_and_risk_audit</td><td class="ftype">object</td><td>RBI policy audit: violations, flags, risk scores</td></tr>
+              <tr><td class="fname">performance_and_outcomes</td><td class="ftype">object</td><td>Agent quality scores, final status, recommendations</td></tr>
+              <tr><td class="fname">transcript_threads</td><td class="ftype">array</td><td>Per-turn conversation with speaker diarization</td></tr>
+              <tr><td class="fname">time_violation_result</td><td class="ftype">object</td><td>IST call-time enforcement (8 AM&ndash;7 PM window)</td></tr>
+            </table>
+          </div>
+
+          <div class="schema-block">
+            <h3>&#128310; compliance_and_risk_audit</h3>
+            <table class="field-table">
+              <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+              <tr><td class="fname">is_within_policy</td><td class="ftype">boolean</td><td>True if no critical violations detected</td></tr>
+              <tr><td class="fname">policy_violations</td><td class="ftype">Violation[]</td><td>Array of per-clause RBI violation objects</td></tr>
+              <tr><td class="fname">compliance_flags</td><td class="ftype">string[]</td><td>Textual flag descriptions for compliance issues</td></tr>
+              <tr><td class="fname">detected_threats</td><td class="ftype">string[]</td><td>Specific threatening phrases found in transcript</td></tr>
+              <tr><td class="fname">risk_scores</td><td class="ftype">object</td><td>fraud_risk, escalation_risk, urgency_level, risk_escalation_score (0&ndash;100)</td></tr>
+            </table>
+          </div>
+
+          <div class="schema-block">
+            <h3>&#128310; policy_violations[ ] &mdash; Per-item fields</h3>
+            <table class="field-table">
+              <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+              <tr><td class="fname">clause_id</td><td class="ftype">string</td><td>RBI clause ref e.g. <code style="color:#58a6ff">RBI-FPC-7</code></td></tr>
+              <tr><td class="fname">rule_name</td><td class="ftype">string</td><td>Human-readable rule name</td></tr>
+              <tr><td class="fname">severity</td><td class="ftype">string</td><td><code>low</code> | <code>medium</code> | <code>high</code> | <code>critical</code></td></tr>
+              <tr><td class="fname">evidence_quote</td><td class="ftype">string</td><td>Exact transcript excerpt triggering the violation</td></tr>
+              <tr><td class="fname">description</td><td class="ftype">string</td><td>Detailed explanation of the violation</td></tr>
+              <tr><td class="fname">timestamp</td><td class="ftype">string</td><td>MM:SS position in the call</td></tr>
+            </table>
+          </div>
+
+          <div class="schema-block">
+            <h3>&#128310; emotional_and_tonal_analysis</h3>
+            <table class="field-table">
+              <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+              <tr><td class="fname">overall_sentiment</td><td class="ftype">string</td><td>positive | negative | neutral | mixed</td></tr>
+              <tr><td class="fname">emotional_tone</td><td class="ftype">string</td><td>Dominant tone description for the full call</td></tr>
+              <tr><td class="fname">emotional_graph</td><td class="ftype">GraphPoint[]</td><td>Timeline array: {timestamp, tone, acoustic_arousal}</td></tr>
+            </table>
+          </div>
+
+          <div class="schema-block">
+            <h3>&#128310; transcript_threads[ ] &mdash; Per-turn fields</h3>
+            <table class="field-table">
+              <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+              <tr><td class="fname">speaker</td><td class="ftype">string</td><td>Agent | Customer (Gemini diarization)</td></tr>
+              <tr><td class="fname">message</td><td class="ftype">string</td><td>Transcribed utterance text</td></tr>
+              <tr><td class="fname">tone</td><td class="ftype">string</td><td>Per-turn tone: positive | neutral | angry/frustrated | fearful/anxious | urgent</td></tr>
+              <tr><td class="fname">timestamp</td><td class="ftype">string</td><td>Position in call MM:SS</td></tr>
+              <tr><td class="fname">language</td><td class="ftype">string</td><td>Detected language for this turn</td></tr>
+            </table>
+          </div>
+
+          <div class="schema-block">
+            <h3>&#128310; performance_and_outcomes</h3>
+            <table class="field-table">
+              <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+              <tr><td class="fname">agent_performance</td><td class="ftype">object</td><td>politeness, empathy, professionalism, overall_quality_score (0&ndash;100)</td></tr>
+              <tr><td class="fname">call_outcome_prediction</td><td class="ftype">string</td><td>Predicted outcome of the call</td></tr>
+              <tr><td class="fname">repeat_complaint_detected</td><td class="ftype">boolean</td><td>Whether a repeat complaint was identified</td></tr>
+              <tr><td class="fname">final_status</td><td class="ftype">string</td><td>Resolved | Unresolved | Escalated | etc.</td></tr>
+              <tr><td class="fname">recommended_action</td><td class="ftype">string</td><td>AI-recommended next action for compliance team</td></tr>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <script>
 const API = "http://localhost:8000";
 let analysisTimeout = null;
+let _lastData = null;
 
-// ── File selection ──
+function switchTab(name) {
+  ["analysis","json","api","schema"].forEach(t => {
+    document.getElementById("tab-"+t).classList.toggle("active", t===name);
+    document.getElementById("panel-"+t).classList.toggle("active", t===name);
+  });
+}
+
 const audioInput = document.getElementById("audioInput");
 const uploadZone = document.getElementById("uploadZone");
 const analyzeBtn = document.getElementById("analyzeBtn");
 
 audioInput.addEventListener("change", () => {
-  if (audioInput.files[0]) {
-    document.getElementById("fileName").textContent = "✓ " + audioInput.files[0].name;
-    analyzeBtn.disabled = false;
-  }
+  if (audioInput.files[0]) { document.getElementById("fileName").textContent = "checked " + audioInput.files[0].name; analyzeBtn.disabled = false; }
 });
-
 uploadZone.addEventListener("dragover", e => { e.preventDefault(); uploadZone.classList.add("drag-over"); });
 uploadZone.addEventListener("dragleave", () => uploadZone.classList.remove("drag-over"));
 uploadZone.addEventListener("drop", e => {
-  e.preventDefault();
-  uploadZone.classList.remove("drag-over");
+  e.preventDefault(); uploadZone.classList.remove("drag-over");
   const f = e.dataTransfer.files[0];
-  if (f) {
-    audioInput.files = e.dataTransfer.files;
-    document.getElementById("fileName").textContent = "✓ " + f.name;
-    analyzeBtn.disabled = false;
-  }
+  if (f) { audioInput.files = e.dataTransfer.files; document.getElementById("fileName").textContent = "checked " + f.name; analyzeBtn.disabled = false; }
 });
 
-// ── Config toggle ──
 function toggleConfig() {
-  const header = document.getElementById("configToggle");
-  const body = document.getElementById("configBody");
-  header.classList.toggle("open");
-  body.classList.toggle("open");
+  document.getElementById("configToggle").classList.toggle("open");
+  document.getElementById("configBody").classList.toggle("open");
 }
-
 async function loadDefaultConfig() {
   try {
-    const r = await fetch(`${API}/config`);
-    const d = await r.json();
-    document.getElementById("configInput").value = JSON.stringify(d, null, 2);
+    const r = await fetch(API+"/config");
+    document.getElementById("configInput").value = JSON.stringify(await r.json(), null, 2);
     document.getElementById("configError").style.display = "none";
   } catch(e) {
-    document.getElementById("configError").textContent = "Could not load default config: " + e.message;
+    document.getElementById("configError").textContent = "Could not load: " + e.message;
     document.getElementById("configError").style.display = "block";
   }
 }
 
-// ── Progress animation ──
 const STEPS = ["step1","step2","step3","step4","step5"];
 let stepIdx = 0;
 function startProgress() {
-  const ps = document.getElementById("progressSteps");
-  ps.style.display = "flex";
-  stepIdx = 0;
-  STEPS.forEach(s => {
-    const el = document.getElementById(s);
-    el.className = "step";
-    el.querySelector(".step-dot").textContent = s.replace("step","");
-  });
+  document.getElementById("progressSteps").style.display = "flex"; stepIdx = 0;
+  STEPS.forEach(s => { const e=document.getElementById(s); e.className="step"; e.querySelector(".step-dot").textContent=s.replace("step",""); });
   advanceStep();
 }
 function advanceStep() {
-  if (stepIdx > 0 && stepIdx <= STEPS.length) {
-    const prev = document.getElementById(STEPS[stepIdx-1]);
-    prev.className = "step done";
-    prev.querySelector(".step-dot").textContent = "✓";
-  }
-  if (stepIdx < STEPS.length) {
-    document.getElementById(STEPS[stepIdx]).className = "step active";
-    stepIdx++;
-    const delay = [4000, 20000, 6000, 30000, 3000][stepIdx-1] || 8000;
-    analysisTimeout = setTimeout(advanceStep, delay);
+  if (stepIdx>0&&stepIdx<=STEPS.length) { const p=document.getElementById(STEPS[stepIdx-1]); p.className="step done"; p.querySelector(".step-dot").textContent="check"; }
+  if (stepIdx<STEPS.length) {
+    document.getElementById(STEPS[stepIdx]).className="step active"; stepIdx++;
+    analysisTimeout=setTimeout(advanceStep,[4000,20000,6000,30000,3000][stepIdx-1]||8000);
   }
 }
 function stopProgress() {
   clearTimeout(analysisTimeout);
-  STEPS.forEach(s => {
-    const el = document.getElementById(s);
-    el.className = "step done";
-    el.querySelector(".step-dot").textContent = "✓";
-  });
-  setTimeout(() => { document.getElementById("progressSteps").style.display = "none"; }, 1500);
+  STEPS.forEach(s => { const e=document.getElementById(s); e.className="step done"; e.querySelector(".step-dot").textContent="check"; });
+  setTimeout(()=>{ document.getElementById("progressSteps").style.display="none"; },1500);
 }
 
-// ── Main analyze ──
 async function analyze() {
-  const file = audioInput.files[0];
-  if (!file) return;
-
-  // Validate optional config
+  const file = audioInput.files[0]; if (!file) return;
   const rawConfig = document.getElementById("configInput").value.trim();
   const configErr = document.getElementById("configError");
   if (rawConfig) {
-    try { JSON.parse(rawConfig); configErr.style.display = "none"; }
-    catch(e) {
-      configErr.textContent = "Invalid JSON: " + e.message;
-      configErr.style.display = "block";
-      if (!document.getElementById("configBody").classList.contains("open")) toggleConfig();
-      return;
-    }
+    try { JSON.parse(rawConfig); configErr.style.display="none"; }
+    catch(e) { configErr.textContent="Invalid JSON: "+e.message; configErr.style.display="block"; if(!document.getElementById("configBody").classList.contains("open"))toggleConfig(); return; }
   }
-
-  // UI: loading state
-  analyzeBtn.disabled = true;
-  document.getElementById("btnIcon").textContent = "";
-  document.getElementById("btnText").innerHTML = '<span class="spinner"></span>&nbsp; Analyzing…';
+  analyzeBtn.disabled=true;
+  document.getElementById("btnIcon").textContent="";
+  document.getElementById("btnText").innerHTML='<span class="spinner"></span>&nbsp; Analyzing&hellip;';
   startProgress();
-  setRight('<div class="empty-state"><div class="icon" style="opacity:0.6;font-size:40px">⏳</div><p>Analysis in progress. This may take 2–3 minutes depending on call length.</p></div>');
+  document.getElementById("panel-analysis").innerHTML='<div class="empty-state"><div class="icon" style="opacity:0.5;font-size:36px">&#9203;</div><p>Analysis in progress &mdash; 2&ndash;3 min depending on call length.</p></div>';
+  document.getElementById("panel-json").innerHTML='<div class="empty-state"><div class="icon">{ }</div><p>Waiting for analysis&hellip;</p></div>';
 
   const form = new FormData();
   form.append("audio_file", file);
   if (rawConfig) form.append("client_config", rawConfig);
 
   try {
-    const resp = await fetch(`${API}/analyze`, { method: "POST", body: form });
+    const resp = await fetch(API+"/analyze", { method:"POST", body:form });
     const data = await resp.json();
     stopProgress();
-    analyzeBtn.disabled = false;
-    document.getElementById("btnIcon").textContent = "🔍";
-    document.getElementById("btnText").textContent = "Analyze Call";
-
+    analyzeBtn.disabled=false;
+    document.getElementById("btnIcon").textContent="&#128269;";
+    document.getElementById("btnText").textContent="Analyze Call";
     if (!resp.ok) {
-      setRight(`<div class="error-box"><b>❌ Error ${resp.status}</b><br>${data.detail || JSON.stringify(data)}</div>`);
+      document.getElementById("panel-analysis").innerHTML=`<div class="error-box"><b>Error ${resp.status}</b><br>${data.detail||JSON.stringify(data)}</div>`;
       return;
     }
-    renderResults(data);
+    _lastData=data;
+    renderAnalysis(data);
+    renderJSONTab(data);
+    switchTab("analysis");
   } catch(e) {
     stopProgress();
-    analyzeBtn.disabled = false;
-    document.getElementById("btnIcon").textContent = "🔍";
-    document.getElementById("btnText").textContent = "Analyze Call";
-    setRight(`<div class="error-box"><b>❌ Request Failed</b><br>${e.message}<br><br>Make sure the server is running at <code>${API}</code>.</div>`);
+    analyzeBtn.disabled=false;
+    document.getElementById("btnIcon").textContent="&#128269;";
+    document.getElementById("btnText").textContent="Analyze Call";
+    document.getElementById("panel-analysis").innerHTML=`<div class="error-box"><b>Request Failed</b><br>${e.message}<br><br>Server: <code>${API}</code></div>`;
   }
 }
 
-function setRight(html) {
-  const rp = document.getElementById("rightPanel");
-  rp.innerHTML = html;
+function renderJSONTab(d) {
+  const jsonStr=JSON.stringify(d,null,2);
+  const lines=jsonStr.split("\n").length;
+  const keys=(jsonStr.match(/"[^"]+"\s*:/g)||[]).length;
+  const id="jsonpre"+Date.now();
+  document.getElementById("panel-json").innerHTML=`
+    <div class="json-toolbar">
+      <div class="json-stats"><b>${lines}</b> lines &middot; <b>${keys}</b> fields &middot; <b>${(new Blob([jsonStr]).size/1024).toFixed(1)} KB</b> &middot; request_id: <b>${esc(d.request_id||"&mdash;")}</b></div>
+      <button class="copy-btn" id="copybtn" onclick="copyJSON()">Copy JSON</button>
+    </div>
+    <div class="json-pre" id="${id}">${syntaxHL(jsonStr)}</div>`;
+  const cnt=document.getElementById("json-tab-cnt");
+  if(cnt){cnt.textContent=lines+"L";cnt.style.background="rgba(88,166,255,0.2)";cnt.style.color="#58a6ff";}
 }
 
-// ── Render results ──
-function renderResults(d) {
-  const rp = document.getElementById("rightPanel");
-  rp.innerHTML = "";
+function copyJSON() {
+  if (!_lastData) return;
+  navigator.clipboard.writeText(JSON.stringify(_lastData,null,2)).then(()=>{
+    const btn=document.getElementById("copybtn");
+    btn.textContent="Copied!"; btn.classList.add("copied");
+    setTimeout(()=>{btn.textContent="Copy JSON";btn.classList.remove("copied");},2000);
+  });
+}
 
-  const meta = d.metadata || {};
-  const intel = d.intelligence_summary || {};
-  const emo = d.emotional_and_tonal_analysis || {};
-  const audit = d.compliance_and_risk_audit || {};
-  const perf = d.performance_and_outcomes || {};
-  const threads = d.transcript_threads || [];
-  const risks = audit.risk_scores || {};
-  const violations = audit.policy_violations || [];
-  const flags = audit.compliance_flags || [];
+function syntaxHL(json) {
+  return esc(json)
+    .replace(/(&quot;[^&]*?&quot;)\s*:/g,'<span class="jk">$1</span>:')
+    .replace(/:\s*(&quot;[^&]*?&quot;)/g,': <span class="js">$1</span>')
+    .replace(/:\s*(-?\d+\.?\d*([eE][+-]?\d+)?)/g,': <span class="jn">$1</span>')
+    .replace(/:\s*(true|false)/g,': <span class="jb">$1</span>')
+    .replace(/:\s*(null)/g,': <span class="jnull">$1</span>');
+}
 
-  // ── Request Info ──
-  rp.appendChild(el("div", "info-row", `
-    <span>🆔 <b>${d.request_id || "—"}</b></span>
-    <span>⏱ <b>${meta.processing_time_ms ? (meta.processing_time_ms/1000).toFixed(1)+"s" : "—"}</b></span>
-    <span>🌐 <b>${(meta.detected_languages||["—"]).join(", ")}</b></span>
-    <span>📊 Complexity: <b>${meta.conversation_complexity || "—"}</b></span>
-    <span>📅 <b>${new Date(meta.timestamp||Date.now()).toLocaleString()}</b></span>
+function renderAnalysis(d) {
+  const ap=document.getElementById("panel-analysis"); ap.innerHTML="";
+  const meta=d.metadata||{},intel=d.intelligence_summary||{},emo=d.emotional_and_tonal_analysis||{};
+  const audit=d.compliance_and_risk_audit||{},perf=d.performance_and_outcomes||{};
+  const threads=d.transcript_threads||[],risks=audit.risk_scores||{};
+  const violations=audit.policy_violations||[],flags=audit.compliance_flags||[];
+
+  ap.appendChild(el("div","info-row",`
+    <span>&#128290; <b>${d.request_id||"&mdash;"}</b></span>
+    <span>&#9201; <b>${meta.processing_time_ms?(meta.processing_time_ms/1000).toFixed(1)+"s":"&mdash;"}</b></span>
+    <span>&#127758; <b>${(meta.detected_languages||["&mdash;"]).join(", ")}</b></span>
+    <span>&#128202; Complexity: <b>${meta.conversation_complexity||"&mdash;"}</b></span>
+    <span>&#128197; <b>${new Date(meta.timestamp||Date.now()).toLocaleString()}</b></span>
   `));
 
-  // ── Policy Status Banner ──
-  const isOk = audit.is_within_policy;
-  rp.appendChild(el("div", `policy-banner ${isOk ? "policy-ok" : "policy-fail"}`,
-    `${isOk ? "✅" : "❌"} ${isOk ? "Call is within policy — no major violations detected." : `Policy violations detected — ${violations.length} violation${violations.length!==1?"s":""} found.`}`
+  const isOk=audit.is_within_policy;
+  ap.appendChild(el("div",`policy-banner ${isOk?"policy-ok":"policy-fail"}`,
+    `${isOk?"":""}  ${isOk?"Call is within policy &mdash; no major violations detected.":`Policy violations detected &mdash; ${violations.length} violation${violations.length!==1?"s":""} found.`}`
   ));
 
-  // ── Time Violation ──
   if (d.time_violation_result?.violation) {
-    rp.appendChild(el("div", "time-violation-banner",
-      `<span class="icon">⏰</span><div><b>Time Violation Detected</b><br>Call placed at ${d.time_violation_result.ist_time} IST — outside permitted 8:00 AM – 7:00 PM window. ${d.time_violation_result.description||""}</div>`
+    ap.appendChild(el("div","time-violation-banner",
+      `<span class="icon">&#9200;</span><div><b>Time Violation Detected</b><br>Call placed at ${d.time_violation_result.ist_time} IST &mdash; outside permitted 8:00 AM&ndash;7:00 PM window. ${d.time_violation_result.description||""}</div>`
     ));
   }
 
-  // ── Summary ──
-  const summaryCard = card("📝 Intelligence Summary", `
-    <p class="summary-text">${esc(intel.summary || "No summary.")}</p>
-    ${intel.conversation_about ? `<p style="font-size:13px;color:var(--muted);margin:6px 0 0"><b style="color:var(--text)">About:</b> ${esc(intel.conversation_about)}</p>` : ""}
-    ${perf.recommended_action ? `<p style="font-size:13px;color:var(--muted);margin:4px 0 0"><b style="color:var(--text)">Recommended Action:</b> ${esc(perf.recommended_action)}</p>` : ""}
+  ap.appendChild(card("&#128221; Intelligence Summary",`
+    <p class="summary-text">${esc(intel.summary||"No summary.")}</p>
+    ${intel.conversation_about?`<p style="font-size:12px;color:var(--muted);margin:6px 0 0"><b style="color:var(--text)">About:</b> ${esc(intel.conversation_about)}</p>`:""}
+    ${perf.recommended_action?`<p style="font-size:12px;color:var(--muted);margin:4px 0 0"><b style="color:var(--text)">Rec. Action:</b> ${esc(perf.recommended_action)}</p>`:""}
     <div class="meta-pills">
-      ${pillHTML("blue", "Category: " + (intel.category || "—"))}
-      ${pillHTML("purple", "Sentiment: " + (emo.overall_sentiment || "—"))}
-      ${pillHTML("orange", "Tone: " + (emo.emotional_tone || "—"))}
-      ${pillHTML("yellow", "Outcome: " + (perf.call_outcome_prediction || "—"))}
-      ${(intel.key_topics||[]).map(t => pillHTML("blue", t)).join("")}
+      ${pillHTML("blue","Category: "+(intel.category||"&mdash;"))}
+      ${pillHTML("purple","Sentiment: "+(emo.overall_sentiment||"&mdash;"))}
+      ${pillHTML("orange","Tone: "+(emo.emotional_tone||"&mdash;"))}
+      ${pillHTML("yellow","Outcome: "+(perf.call_outcome_prediction||"&mdash;"))}
+      ${(intel.key_topics||[]).map(t=>pillHTML("blue",t)).join("")}
     </div>
-  `);
-  rp.appendChild(summaryCard);
+  `));
 
-  // ── Risk Scores ──
-  const rs = risks;
-  const score = rs.risk_escalation_score ?? 0;
-  const scoreColor = score >= 75 ? "risk-red" : score >= 50 ? "risk-orange" : score >= 25 ? "risk-yellow" : "risk-green";
-  const barColor = score >= 75 ? "#f85149" : score >= 50 ? "#db6d28" : score >= 25 ? "#d29922" : "#3fb950";
-
-  const riskCard = card("⚠️ Risk Scores", `
+  const rs=risks,score=rs.risk_escalation_score??0;
+  const scC=score>=75?"risk-red":score>=50?"risk-orange":score>=25?"risk-yellow":"risk-green";
+  const barC=score>=75?"#f85149":score>=50?"#db6d28":score>=25?"#d29922":"#3fb950";
+  ap.appendChild(card("&#9888;&#65039; Risk Scores",`
     <div class="risk-grid">
-      ${riskItem("Fraud Risk",      rs.fraud_risk)}
-      ${riskItem("Escalation Risk", rs.escalation_risk)}
-      ${riskItem("Urgency",         rs.urgency_level)}
-      <div class="risk-item" style="grid-column:span 1">
-        <div class="risk-label">Risk Score</div>
-        <div class="risk-value ${scoreColor}">${score}</div>
-        <div class="score-bar-wrap">
-          <div class="score-bar" style="width:${score}%;background:${barColor}"></div>
-        </div>
-      </div>
+      ${riskItem("Fraud Risk",rs.fraud_risk)}
+      ${riskItem("Escalation Risk",rs.escalation_risk)}
+      ${riskItem("Urgency",rs.urgency_level)}
+      <div class="risk-item"><div class="risk-label">Risk Score</div><div class="risk-value ${scC}">${score}</div><div class="score-bar-wrap"><div class="score-bar" style="width:${score}%;background:${barC}"></div></div></div>
     </div>
-  `);
-  rp.appendChild(riskCard);
+  `));
 
-  // ── Compliance Violations ──
-  let violationsHTML;
-  if (violations.length === 0) {
-    violationsHTML = `<div class="no-violations">✅ No policy violations detected.</div>`;
+  let vHTML;
+  if (!violations.length) {
+    vHTML=`<div class="no-violations">No policy violations detected.</div>`;
   } else {
-    const rows = violations.map(v => {
-      const sev = (v.severity||"medium").toLowerCase();
-      return `<tr>
-        <td><span class="clause-badge">${esc(v.clause_id||"—")}</span></td>
-        <td><b>${esc(v.rule_name||"—")}</b><br><span class="evidence-quote">"${esc(v.evidence_quote||"")}"</span></td>
-        <td><span class="sev-badge sev-${sev}">${esc(sev)}</span></td>
-        <td>${esc(v.timestamp||"—")}</td>
-        <td style="color:var(--muted);font-size:12px">${esc(v.description||"").replace(/\n/g,"<br>")}</td>
-      </tr>`;
-    }).join("");
-    violationsHTML = `<div style="overflow-x:auto"><table class="violations-table">
-      <thead><tr>
-        <th>Clause</th><th>Rule / Evidence</th><th>Severity</th><th>Time</th><th>Detail</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table></div>`;
+    const rows=violations.map(v=>{const sev=(v.severity||"medium").toLowerCase();return`<tr><td><span class="clause-badge">${esc(v.clause_id||"&mdash;")}</span></td><td><b>${esc(v.rule_name||"&mdash;")}</b><br><span class="evidence-quote">"${esc(v.evidence_quote||"")}"</span></td><td><span class="sev-badge sev-${sev}">${esc(sev)}</span></td><td>${esc(v.timestamp||"&mdash;")}</td><td style="color:var(--muted);font-size:11px">${esc(v.description||"").replace(/\n/g,"<br>")}</td></tr>`;}).join("");
+    vHTML=`<div style="overflow-x:auto"><table class="violations-table"><thead><tr><th>Clause</th><th>Rule / Evidence</th><th>Severity</th><th>Time</th><th>Detail</th></tr></thead><tbody>${rows}</tbody></table></div>`;
   }
-  rp.appendChild(card(`🚨 Policy Violations (${violations.length})`, violationsHTML));
+  ap.appendChild(card(`&#128680; Policy Violations (${violations.length})`,vHTML));
 
-  // ── Compliance Flags ──
-  if (flags.length > 0) {
-    const flagsHTML = `<div class="flags-wrap">${flags.map(f => pillHTML("red", f)).join("")}</div>`;
-    rp.appendChild(card("🚩 Compliance Flags", flagsHTML));
-  }
+  if (flags.length>0) ap.appendChild(card("&#128681; Compliance Flags",`<div class="flags-wrap">${flags.map(f=>pillHTML("red",f)).join("")}</div>`));
 
-  // ── Detected Threats ──
-  const threats = audit.detected_threats || [];
-  if (threats.length > 0) {
-    const tHTML = `<div class="flags-wrap">${threats.map(t => `<div style="padding:6px 12px;background:rgba(248,81,73,0.1);border:1px solid rgba(248,81,73,0.25);border-radius:8px;font-size:13px;color:#ffa198">⚠️ ${esc(t)}</div>`).join("")}</div>`;
-    rp.appendChild(card("🔴 Detected Threats", tHTML));
-  }
+  const threats=audit.detected_threats||[];
+  if (threats.length>0) ap.appendChild(card("&#128308; Detected Threats",`<div class="flags-wrap">${threats.map(t=>`<div style="padding:5px 11px;background:rgba(248,81,73,0.1);border:1px solid rgba(248,81,73,0.25);border-radius:7px;font-size:12px;color:#ffa198"> ${esc(t)}</div>`).join("")}</div>`));
 
-  // ── Emotion Timeline ──
-  const egraph = emo.emotional_graph || [];
-  if (egraph.length > 0) {
-    const segments = egraph.map(g => {
-      const tone = (g.tone||"neutral").toLowerCase().replace(/\s+/g,"-");
-      return `<div class="et-segment tone-${tone}" title="${g.timestamp}: ${g.tone} (${g.acoustic_arousal})">
-        <div>${toneEmoji(g.tone)}</div>
-        <div class="et-label">${esc(g.timestamp||"")}</div>
-      </div>`;
-    }).join("");
-    rp.appendChild(card("📈 Emotion Timeline", `
-      <div class="emotion-timeline">${segments}</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">
-        ${[["Neutral","#8b949e"], ["Frustrated","#d29922"], ["Angry","#f85149"], ["Threatening","#a371f7"], ["Distressed","#db6d28"], ["Aggressive","#ff6b6b"]].map(([l,c]) =>
-          `<span style="font-size:11px;color:${c}">● ${l}</span>`
-        ).join("")}
-      </div>
-    `));
+  const egraph=emo.emotional_graph||[];
+  if (egraph.length>0) {
+    const EG_COLORS={neutral:"#8b949e",frustrated:"#d29922",angry:"#f85149",threatening:"#a371f7",distressed:"#db6d28",aggressive:"#ff6b6b",calm:"#3fb950",professional:"#58a6ff",polite:"#3fb950"};
+    function egColor(t){const tl=(t||"").toLowerCase();for(const[k,v]of Object.entries(EG_COLORS))if(tl.includes(k))return v;return"#8b949e";}
+    function egArousal(ar){const a=String(ar||"").toLowerCase();if(!isNaN(+a)&&a!=="")return Math.min(100,Math.max(0,+a));if(a.includes("very high")||a.includes("extreme"))return 88;if(a.includes("high"))return 70;if(a.includes("medium")||a.includes("moderate"))return 50;if(a.includes("low"))return 25;return 42;}
+    function egParseTs(ts){const p=String(ts||"0:00").split(":").map(Number);return p.length===3?p[0]*3600+p[1]*60+p[2]:p.length===2?p[0]*60+p[1]:p[0]||0;}
+    const pts=egraph.map((g,i)=>({ts:g.timestamp||"",tone:g.tone||"neutral",ar:String(g.acoustic_arousal||""),y:egArousal(g.acoustic_arousal),sec:egParseTs(g.timestamp),color:egColor(g.tone),i}));
+    const W=800,H=180,PL=40,PR=20,PT=16,PB=46,iW=W-PL-PR,iH=H-PT-PB;
+    const maxSec=Math.max(...pts.map(dd=>dd.sec),1);
+    const egPx=dd=>PL+(pts.length<2?iW/2:dd.sec/maxSec*iW);
+    const egPy=dd=>PT+(1-dd.y/100)*iH;
+    const yGrid=[0,25,50,75,100].map(v=>{const y=(PT+(1-v/100)*iH).toFixed(1);const lbl=v===0?"Low":v===50?"Med":v===100?"High":"";return`<line x1="${PL}" y1="${y}" x2="${W-PR}" y2="${y}" stroke="rgba(139,148,158,0.12)" stroke-width="1"/>`+(lbl?`<text x="${PL-5}" y="${(parseFloat(y)+4).toFixed(1)}" text-anchor="end" class="eg-axis-label">${lbl}</text>`:"");}).join("");
+    const step=Math.max(1,Math.ceil(pts.length/8));
+    const xTicks=pts.filter((_,i)=>i%step===0||i===pts.length-1).map(dd=>{const x=egPx(dd).toFixed(1);return`<line x1="${x}" y1="${PT}" x2="${x}" y2="${(PT+iH+5).toFixed(1)}" stroke="rgba(139,148,158,0.15)" stroke-width="1"/><text x="${x}" y="${H-8}" text-anchor="middle" class="eg-axis-label">${esc(dd.ts)}</text>`;}).join("");
+    const linePts=pts.map(dd=>`${egPx(dd).toFixed(1)},${egPy(dd).toFixed(1)}`).join(" ");
+    const areaD=`M${egPx(pts[0]).toFixed(1)},${(PT+iH).toFixed(1)} `+pts.map(dd=>`L${egPx(dd).toFixed(1)},${egPy(dd).toFixed(1)}`).join(" ")+` L${egPx(pts[pts.length-1]).toFixed(1)},${(PT+iH).toFixed(1)} Z`;
+    const segBar=pts.length>1?pts.slice(0,-1).map((dd,i)=>{const x1=egPx(dd),x2=egPx(pts[i+1]);return`<rect x="${x1.toFixed(1)}" y="${(PT+iH+8).toFixed(1)}" width="${(x2-x1).toFixed(1)}" height="5" fill="${dd.color}" opacity="0.75" rx="1"/>`;}).join(""):"";
+    const egId="eg"+Date.now();
+    const dots=pts.map(dd=>`<circle class="eg-dot" cx="${egPx(dd).toFixed(1)}" cy="${egPy(dd).toFixed(1)}" r="5" fill="${dd.color}" stroke="var(--bg)" stroke-width="2" data-ts="${esc(dd.ts)}" data-tone="${esc(dd.tone)}" data-ar="${esc(dd.ar)}"/>`).join("");
+    const svgHTML=`<div class="eg-wrap" id="${egId}_wrap"><div class="eg-tooltip" id="${egId}_tip"></div><svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;overflow:visible"><defs><linearGradient id="${egId}_fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#58a6ff" stop-opacity="0.18"/><stop offset="100%" stop-color="#58a6ff" stop-opacity="0.02"/></linearGradient></defs>${yGrid}${xTicks}<path d="${areaD}" fill="url(#${egId}_fill)"/><polyline points="${linePts}" fill="none" stroke="rgba(88,166,255,0.65)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${segBar}${dots}</svg><div class="eg-legend">${Object.entries(EG_COLORS).map(([l,c])=>`<span style="color:${c}">&#9679; ${l[0].toUpperCase()+l.slice(1)}</span>`).join("")}</div></div>`;
+    const egCard=card("&#128200; Emotional Arc &mdash; Tone &amp; Arousal Over Time",svgHTML);
+    ap.appendChild(egCard);
+    const egWrap=document.getElementById(egId+"_wrap"),egTip=document.getElementById(egId+"_tip");
+    if(egWrap&&egTip){egWrap.querySelectorAll(".eg-dot").forEach(dot=>{dot.addEventListener("mouseenter",()=>{egTip.innerHTML=`<b>${esc(dot.dataset.ts)}</b><br>Tone: <b style="color:${egColor(dot.dataset.tone)}">${esc(dot.dataset.tone)}</b><br>Arousal: ${esc(dot.dataset.ar)}`;egTip.style.display="block";});dot.addEventListener("mousemove",e=>{const r=egWrap.getBoundingClientRect();egTip.style.left=(e.clientX-r.left+14)+"px";egTip.style.top=(e.clientY-r.top-10)+"px";});dot.addEventListener("mouseleave",()=>{egTip.style.display="none";});});}
   }
 
-  // ── Agent Performance ──
-  const ap = perf.agent_performance || {};
-  const qs = ap.overall_quality_score ?? 0;
-  const qsColor = qs >= 80 ? "#3fb950" : qs >= 60 ? "#d29922" : qs >= 40 ? "#db6d28" : "#f85149";
-  const qsBar = qs >= 80 ? "#3fb950" : qs >= 60 ? "#d29922" : qs >= 40 ? "#db6d28" : "#f85149";
-  rp.appendChild(card("🧑‍💼 Agent Performance", `
+  const agp=perf.agent_performance||{},qs=agp.overall_quality_score??0;
+  const qsC=qs>=80?"#3fb950":qs>=60?"#d29922":qs>=40?"#db6d28":"#f85149";
+  ap.appendChild(card("&#129489;&#8205;&#128188; Agent Performance",`
     <div class="agent-grid">
-      ${agentItem("Politeness",      ap.politeness)}
-      ${agentItem("Empathy",         ap.empathy)}
-      ${agentItem("Professionalism", ap.professionalism)}
-      <div class="agent-item">
-        <div class="agent-item-label">Repeat Complaint</div>
-        <div class="agent-item-value" style="font-size:16px">${perf.repeat_complaint_detected ? "🔁 Yes" : "✅ No"}</div>
-      </div>
+      ${agentItem("Politeness",agp.politeness)}
+      ${agentItem("Empathy",agp.empathy)}
+      ${agentItem("Professionalism",agp.professionalism)}
+      <div class="agent-item"><div class="agent-item-label">Repeat Complaint</div><div class="agent-item-value" style="font-size:14px">${perf.repeat_complaint_detected?"Repeat Yes":"No"}</div></div>
       <div class="quality-score-wrap">
         <div class="quality-row">
-          <div>
-            <div class="agent-item-label">Overall Quality Score</div>
-            <div class="quality-score-num" style="color:${qsColor}">${qs}<span style="font-size:14px;color:var(--muted)">/100</span></div>
-          </div>
-          <div style="text-align:right">
-            <div class="agent-item-label">Final Status</div>
-            <div style="font-size:13px;font-weight:600">${esc(perf.final_status||"—")}</div>
-          </div>
+          <div><div class="agent-item-label">Quality Score</div><div class="quality-score-num" style="color:${qsC}">${qs}<span style="font-size:13px;color:var(--muted)">/100</span></div></div>
+          <div style="text-align:right"><div class="agent-item-label">Final Status</div><div style="font-size:12px;font-weight:600">${esc(perf.final_status||"&mdash;")}</div></div>
         </div>
-        <div class="score-bar-wrap" style="height:8px">
-          <div class="score-bar" style="width:${qs}%;background:${qsBar}"></div>
-        </div>
-        <div style="margin-top:10px;font-size:13px;color:var(--muted)">
-          <b style="color:var(--text)">Recommended Action:</b> ${esc(perf.recommended_action||"—")}
-        </div>
+        <div class="score-bar-wrap" style="height:7px"><div class="score-bar" style="width:${qs}%;background:${qsC}"></div></div>
+        <div style="margin-top:9px;font-size:12px;color:var(--muted)"><b style="color:var(--text)">Recommended Action:</b> ${esc(perf.recommended_action||"&mdash;")}</div>
       </div>
     </div>
   `));
 
-  // ── Transcript ──
-  if (threads.length > 0) {
-    const tHTML = `<div class="transcript-list">${threads.map(t => {
-      const sp = (t.speaker||"unknown").toLowerCase();
-      const rawTone = (t.tone||"neutral");
-      const toneCls = rawTone.toLowerCase().replace(/[^a-z]/g,"-").replace(/-+/g,"-").replace(/^-|-$/g,"");
-      return `<div class="turn">
-        <div class="turn-meta">
-          <span class="turn-speaker ${sp}">${esc(t.speaker||"?")}</span>
-          <span class="turn-ts">${esc(t.timestamp||"")}</span>
-        </div>
-        <div class="turn-body">
-          <span class="turn-msg">${esc(t.message||"")}</span>
-          <span class="tone-tag tone-${toneCls}">${esc(rawTone)}</span>
-          ${t.language && t.language !== "English" ? `<span style="font-size:10px;color:var(--muted);margin-left:4px">[${esc(t.language)}]</span>` : ""}
-        </div>
-      </div>`;
+  if (threads.length>0) {
+    const tHTML=`<div class="transcript-list">${threads.map(t=>{
+      const sp=(t.speaker||"unknown").toLowerCase();
+      const rawTone=(t.tone||"neutral");
+      const toneCls=rawTone.toLowerCase().replace(/[^a-z]/g,"-").replace(/-+/g,"-").replace(/^-|-$/g,"");
+      return`<div class="turn"><div class="turn-meta"><span class="turn-speaker ${sp}">${esc(t.speaker||"?")}</span><span class="turn-ts">${esc(t.timestamp||"")}</span></div><div class="turn-body"><span class="turn-msg">${esc(t.message||"")}</span><span class="tone-tag tone-${toneCls}">${esc(rawTone)}</span>${t.language&&t.language!=="English"?`<span style="font-size:9px;color:var(--muted);margin-left:4px">[${esc(t.language)}]</span>`:""}</div></div>`;
     }).join("")}</div>`;
-    rp.appendChild(card(`💬 Transcript (${threads.length} turns)`, tHTML));
+    ap.appendChild(card(`&#128172; Transcript (${threads.length} turns)`,tHTML));
   }
-
-  // ── Raw JSON ──
-  const jsonSection = card("{ } Raw JSON Output",
-    `<details><summary style="cursor:pointer;color:var(--muted);font-size:13px;margin-bottom:8px">Click to expand full JSON</summary>
-    <pre style="font-size:11px;line-height:1.5;overflow-x:auto;color:#8b949e;font-family:'SF Mono',monospace">${esc(JSON.stringify(d, null, 2))}</pre>
-    </details>`
-  );
-  rp.appendChild(jsonSection);
 }
 
-// ── Helpers ──
-function el(tag, cls, html) {
-  const e = document.createElement(tag);
-  e.className = cls;
-  e.innerHTML = html;
-  return e;
-}
-
-function card(title, bodyHTML) {
-  const c = document.createElement("div");
-  c.className = "card";
-  c.innerHTML = `<div class="card-header">${title}</div><div class="card-body">${bodyHTML}</div>`;
-  return c;
-}
-
-function pillHTML(color, text) {
-  return `<span class="pill pill-${color}">${esc(text)}</span>`;
-}
-
-function riskItem(label, value) {
-  const v = (value||"unknown").toLowerCase();
-  const cls = v === "high" ? "risk-red" : v === "medium" ? "risk-orange" : v === "low" ? "risk-green" : "";
-  return `<div class="risk-item"><div class="risk-label">${label}</div><div class="risk-value ${cls}">${v.toUpperCase()}</div></div>`;
-}
-
-function agentItem(label, value) {
-  const v = (value||"—").toLowerCase();
-  const cls = ["excellent","high","good"].includes(v) ? "risk-green" : ["fair","medium"].includes(v) ? "risk-yellow" : ["poor","low"].includes(v) ? "risk-orange" : v === "unacceptable" || v === "none" ? "risk-red" : "";
-  return `<div class="agent-item"><div class="agent-item-label">${label}</div><div class="agent-item-value ${cls}" style="font-size:16px;text-transform:capitalize">${esc(v)}</div></div>`;
-}
-
-function toneEmoji(tone) {
-  const t = (tone||"").toLowerCase();
-  if (t.includes("angry") || t.includes("aggressive")) return "😠";
-  if (t.includes("threat")) return "⚠️";
-  if (t.includes("distress")) return "😟";
-  if (t.includes("frustrat")) return "😤";
-  return "😐";
-}
-
-function esc(s) {
-  return String(s)
-    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;").replace(/'/g,"&#039;");
-}
+function el(tag,cls,html){const e=document.createElement(tag);e.className=cls;e.innerHTML=html;return e;}
+function card(title,bodyHTML){const c=document.createElement("div");c.className="card";c.innerHTML=`<div class="card-header">${title}</div><div class="card-body">${bodyHTML}</div>`;return c;}
+function pillHTML(color,text){return`<span class="pill pill-${color}">${esc(text)}</span>`;}
+function riskItem(label,value){const v=(value||"unknown").toLowerCase();const cls=v==="high"?"risk-red":v==="medium"?"risk-orange":v==="low"?"risk-green":"";return`<div class="risk-item"><div class="risk-label">${label}</div><div class="risk-value ${cls}">${v.toUpperCase()}</div></div>`;}
+function agentItem(label,value){const v=(value||"&mdash;").toLowerCase();const cls=["excellent","high","good"].includes(v)?"risk-green":["fair","medium"].includes(v)?"risk-yellow":["poor","low"].includes(v)?"risk-orange":v==="unacceptable"||v==="none"?"risk-red":"";return`<div class="agent-item"><div class="agent-item-label">${label}</div><div class="agent-item-value ${cls}" style="font-size:15px;text-transform:capitalize">${esc(v)}</div></div>`;}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");}
 </script>
 </body>
 </html>
