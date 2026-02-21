@@ -1,0 +1,41 @@
+NBFC FAIR PRACTICES CODE – DEBT COLLECTION GUIDELINES
+======================================================
+
+CLAUSE NBFC-FP-01: TRANSPARENT COMMUNICATION
+All NBFCs and their agents must communicate transparently with borrowers. Agents must 
+not make misleading statements about interest rates, outstanding balances, fees, or 
+legal consequences. All information provided must be accurate and verifiable.
+
+CLAUSE NBFC-FP-02: NO MISLEADING STATEMENTS
+Agents are prohibited from making misleading statements about the borrower's account, 
+payment terms, or the legal status of the debt. This includes exaggerating outstanding 
+amounts, inventing fees not specified in the loan agreement, or misrepresenting the 
+authority of the recovery agent.
+
+CLAUSE NBFC-FP-03: PRIVACY AND DATA PROTECTION
+NBFCs must ensure that customer financial information is kept strictly confidential. 
+Recovery agents must not discuss the customer's debt, account details, or personal 
+information with unauthorized third parties. Disclosure of customer financial data 
+to anyone other than the authorized account holder is a violation.
+
+CLAUSE NBFC-FP-04: CUSTOMER GRIEVANCE REDRESSAL
+Every NBFC must have a documented grievance redressal mechanism. If a customer raises 
+a complaint or dispute during a collection call, the agent must acknowledge the complaint, 
+provide a complaint reference number, and immediately escalate to the grievance officer. 
+Collection activities must be paused during active dispute resolution.
+
+CLAUSE NBFC-FP-05: AGENT CONDUCT STANDARDS
+Recovery agents representing NBFCs must pass a certified training program and sign a 
+code of conduct. Any agent found violating fair practices guidelines must be immediately 
+suspended pending an investigation. NBFCs remain liable for the conduct of their agents.
+
+CLAUSE NBFC-FP-06: FREQUENCY OF CONTACT
+Recovery agents must not contact borrowers more than three times per day. Multiple 
+back-to-back calls in a short period constitutes harassment and is prohibited under 
+NBFC Fair Practices Code.
+
+CLAUSE NBFC-FP-07: PAYMENT NEGOTIATION RIGHTS
+Borrowers have the right to negotiate payment terms without coercion. Recovery agents 
+must present payment options professionally, including restructuring plans, settlement 
+options, or moratorium periods where applicable. Rejection of a payment plan request 
+must be communicated in writing.

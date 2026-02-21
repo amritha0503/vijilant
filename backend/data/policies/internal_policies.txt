@@ -1,0 +1,41 @@
+INTERNAL BANK COMPLIANCE POLICIES – DEBT RECOVERY AGENTS
+=========================================================
+
+CLAUSE INTERNAL-TIME-01: OPERATING HOURS COMPLIANCE
+All outbound recovery calls must be placed strictly between 8:00 AM and 7:00 PM IST 
+(Indian Standard Time). Calls placed outside these hours, regardless of the customer's 
+timezone, are in direct violation of both RBI guidelines and internal policy. 
+Violations must be reported immediately to the compliance manager.
+
+CLAUSE INTERNAL-VISIT-01: HOME VISIT PROHIBITION
+Recovery agents are strictly prohibited from threatening unannounced home or office 
+visits as a collection tactic. Any mention of "sending a team to your home", "visiting 
+your residence", or "coming to your doorstep" constitutes a violation. Authorized 
+home visits may only occur after written notice and legal approval from compliance.
+
+CLAUSE INTERNAL-POLICE-01: PROHIBITION ON POLICE AND COURT MENTIONS
+Agents must not mention police intervention, court summons, FIR filing, or arrest 
+without prior written approval from the bank's legal department. Unilateral warnings 
+about police action or criminal proceedings are prohibited and may expose the bank 
+to legal liability.
+
+CLAUSE INTERNAL-JAIL-01: PROHIBITION ON JAIL THREATS
+Agents must never state or imply that the borrower will be imprisoned, jailed, or 
+detained for failing to repay a debt. Civil debt in India does not result in criminal 
+imprisonment, and any such statement is factually incorrect and constitutes coercion.
+
+CLAUSE INTERNAL-EMPATHY-01: MANDATORY EMPATHETIC RESPONSE FOR FRAUD COMPLAINTS
+If a customer reports an unauthorized transaction, unauthorized account debit, or fraud, 
+the agent must immediately acknowledge the complaint with empathy, suspend all collection 
+activity on the disputed amount, and escalate to the fraud investigation team within 
+15 minutes of the call. Continuing to demand payment on a disputed amount is a violation.
+
+CLAUSE INTERNAL-FAMILY-01: NO CONTACT WITH FAMILY MEMBERS
+Agents must never contact, threaten to contact, or mention contacting the borrower's 
+family members (spouse, parents, children, siblings) for the purpose of debt recovery. 
+Any reference to family contact is a violation of privacy policy and RBI guidelines.
+
+CLAUSE INTERNAL-RECORD-01: MANDATORY CALL RECORDING
+All recovery calls must be recorded and stored for a minimum of 180 days. Agents must 
+inform the customer at the start of the call that the conversation is being recorded. 
+Failure to record or inform constitutes a compliance violation.

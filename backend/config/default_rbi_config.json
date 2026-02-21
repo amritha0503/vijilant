@@ -1,0 +1,20 @@
+{
+  "business_domain": "Banking / Debt Recovery",
+  "monitored_products": ["Credit Card", "Personal Loan", "Savings Account", "Home Loan"],
+  "active_policy_set": "RBI_Compliance_v2.1",
+  "risk_triggers": [
+    "Legal Threats",
+    "Harassment",
+    "Unauthorized Debit",
+    "Physical Visit Threat",
+    "Social Shaming",
+    "Jail Mention",
+    "Court Mention",
+    "Family Mention",
+    "Police Mention",
+    "Coercion",
+    "Abusive Language",
+    "Threat"
+  ],
+  "custom_rules": []
+}
